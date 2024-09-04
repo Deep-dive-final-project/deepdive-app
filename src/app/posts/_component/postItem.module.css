@@ -1,0 +1,12 @@
+.container {
+  width: 100%;
+  text-decoration: none;
+  color: black;
+  border: 1px solid lightgray;
+  border-radius: 0.5rem;
+  padding: 20px;
+  display: block;
+}
+.container h3 {
+  margin: 0;
+}
