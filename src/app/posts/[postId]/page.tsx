@@ -1,4 +1,4 @@
-import style from "./page.module.css";
+import styles from "./page.module.css";
 import Link from "next/link";
 import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
 
@@ -8,10 +8,10 @@ type Props = {
 export default async function Profile({ params }: Props) {
   const { postId } = params;
   return (
-    <div className={style.wrapper}>
-      <div className={style.header}>
-        <div className={style.headerLeft}>
-          <Link href="/posts/" className={style.backArrow}>
+    <div className={styles.wrapper}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <Link href="/posts/" className={styles.backArrow}>
             <svg
               fill="currentColor"
               width="16"
@@ -27,10 +27,10 @@ export default async function Profile({ params }: Props) {
               ></path>
             </svg>
           </Link>
-          <h3 className={style.headerTitle}>나의 강의노트</h3>
+          <h3 className={styles.headerTitle}>나의 강의노트</h3>
         </div>
-        <div className={style.headerRight}>
-          <button className={style.updateButton}>
+        <div className={styles.headerRight}>
+          <button className={styles.updateButton}>
             <svg
               fill="currentColor"
               width="16"
@@ -47,7 +47,7 @@ export default async function Profile({ params }: Props) {
             </svg>
             수정하기
           </button>
-          <button className={style.deleteButton}>
+          <button className={styles.deleteButton}>
             <svg
               fill="currentColor"
               width="16"
@@ -66,15 +66,15 @@ export default async function Profile({ params }: Props) {
           </button>
         </div>
       </div>
-      <div className={style.card}>
+      <div className={styles.card}>
         <div>
-          <div className={style.cardTitle}>강의노트 제목</div>
-          <div className={style.cardDetail}>3시간 전</div>
+          <div className={styles.cardTitle}>강의노트 제목</div>
+          <div className={styles.cardDetail}>3시간 전</div>
         </div>
-        <div className={style.summary}>
+        <div className={styles.summary}>
           <MarkdownToHTML />
         </div>
-        <div className={style.rawText}>
+        <div className={styles.rawText}>
           <h5>원본 글</h5>
         </div>
       </div>

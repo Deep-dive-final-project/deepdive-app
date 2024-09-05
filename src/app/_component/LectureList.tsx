@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import style from "./lectureList.module.css";
+import styles from "./lectureList.module.css";
 import Link from "next/link";
 
 interface Section {
@@ -55,14 +55,14 @@ export default function LectureList() {
   };
 
   return (
-    <div className={style.container}>
+    <div className={styles.container}>
       {lectures.map((lecture, index) => (
-        <div key={index} className={style.lectureItem}>
+        <div key={index} className={styles.lectureItem}>
           <div
-            className={`${style.header} ${style.noSelect}`}
+            className={`${styles.header} ${styles.noSelect}`}
             onClick={() => toggleLecture(index)}
           >
-            <h3 className={style.title}>{lecture.title}</h3>
+            <h3 className={styles.title}>{lecture.title}</h3>
             <div>
               {openLecture === index ? (
                 <svg
@@ -101,23 +101,23 @@ export default function LectureList() {
           </div>
 
           <ul
-            className={`${style.sections} ${
-              openLecture === index ? style.sectionsOpen : ""
+            className={`${styles.sections} ${
+              openLecture === index ? styles.sectionsOpen : ""
             }`}
           >
             {lecture.sections.map((section, sectionIndex) => (
-              <li key={sectionIndex} className={style.sectionItem}>
-                <div className={`${style.section} ${style.noSelect}`}>
+              <li key={sectionIndex} className={styles.sectionItem}>
+                <div className={`${styles.section} ${styles.noSelect}`}>
                   {section.title}
                   {section.isWritten ? (
                     <Link
                       href={`/posts/${sectionIndex}`}
-                      className={style.readButton}
+                      className={styles.readButton}
                     >
                       읽기
                     </Link>
                   ) : (
-                    <Link href={`/posts/write`} className={style.writeButton}>
+                    <Link href={`/posts/write`} className={styles.writeButton}>
                       쓰기
                       {/* <svg
                       xmlns="http://www.w3.org/2000/svg"

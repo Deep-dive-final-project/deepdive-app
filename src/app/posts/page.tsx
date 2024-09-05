@@ -1,17 +1,17 @@
 import Link from "next/link";
 import LectureList from "../_component/LectureList";
-import style from "./page.module.css";
+import styles from "./page.module.css";
 import PostItem from "./_component/PostItem";
 
 export default function Posts() {
   return (
-    <div className={style.wrapper}>
+    <div className={styles.wrapper}>
       <h1>강의노트</h1>
-      <div className={style.layout}>
+      <div className={styles.layout}>
         <div style={{ flex: "1" }}>
           <LectureList />
         </div>
-        <div className={style.postList}>
+        <div className={styles.postList}>
           <PostItem />
           <PostItem />
           <PostItem />

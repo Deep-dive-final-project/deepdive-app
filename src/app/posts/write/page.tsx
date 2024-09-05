@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import style from "./page.module.css";
+import styles from "./page.module.css";
 import { useState } from "react";
 
 export default function PostsWrite() {
@@ -12,10 +12,10 @@ export default function PostsWrite() {
   };
 
   return (
-    <div className={style.wrapper}>
-      <div className={style.header}>
-        <div className={style.headerLeft}>
-          <Link href="/posts/" className={style.backArrow}>
+    <div className={styles.wrapper}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <Link href="/posts/" className={styles.backArrow}>
             <svg
               fill="currentColor"
               width="16"
@@ -31,21 +31,21 @@ export default function PostsWrite() {
               ></path>
             </svg>
           </Link>
-          <h3 className={style.headerTitle}>강의노트 작성</h3>
+          <h3 className={styles.headerTitle}>강의노트 작성</h3>
         </div>
         <div>
-          <button className={style.uploadButton} disabled={!post.trim()}>
+          <button className={styles.uploadButton} disabled={!post.trim()}>
             업로드
           </button>
         </div>
       </div>
-      <div className={style.content}>
+      <div className={styles.content}>
         <div>(더미) 파이썬 기초 강좌</div>
         <div>(더미) 1강 사칙연산</div>
         <textarea
           name=""
           id=""
-          className={style.textArea}
+          className={styles.textArea}
           onChange={(e) => setPost(e.target.value)}
           placeholder="강의를 듣고 배운 내용을 적어보세요."
           onClick={handleSubmitPost}
