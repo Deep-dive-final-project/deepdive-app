@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={styles.html}>
-      <body className={styles.body}>
+    <html lang="ko">
+      <body>
         <div className={styles.container}>
           <div style={{ color: "gray" }}>nav 메뉴</div>
           <div className={styles.content}>{children}</div>

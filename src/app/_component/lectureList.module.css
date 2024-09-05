@@ -1,6 +1,7 @@
 .container {
   width: 400px;
   min-height: 500px;
+  min-width: 400px;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
 }
@@ -46,13 +47,21 @@
   display: flex;
   justify-content: space-between;
 }
+.readButton,
+.writeButton {
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px 8px;
+}
 .readButton {
+  cursor: pointer;
+  border: transparent;
   color: black;
   background-color: rgba(7, 149, 71, 0.2);
   text-decoration: none;
   border-radius: 0.5rem;
-
-  padding: 3px 8px;
   display: flex;
   align-items: center;
 }
@@ -60,12 +69,12 @@
   background-color: rgba(7, 149, 71, 0.4);
 }
 .writeButton {
+  border: transparent;
   color: black;
   background-color: rgba(7, 80, 149, 0.2);
   text-decoration: none;
   border-radius: 0.5rem;
 
-  padding: 3px 8px;
   display: flex;
   align-items: center;
 }

@@ -1,0 +1,19 @@
+.card {
+  width: 100%;
+  border: 0.0625rem solid lightgray;
+  border-radius: 0.5rem;
+
+  padding: 1rem;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail {
+  text-decoration: none;
+  color: black;
+}
+.detail:hover {
+  text-decoration: underline;
+}

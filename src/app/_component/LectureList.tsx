@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "./lectureList.module.css";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Section {
   title: string;
@@ -44,6 +45,8 @@ const lectures: Lecture[] = [
 ];
 
 export default function LectureList() {
+  const router = useRouter();
+
   const [openLecture, setOpenLecture] = useState<number | null>(null);
 
   const toggleLecture = (index: number) => {
@@ -52,6 +55,10 @@ export default function LectureList() {
     } else {
       setOpenLecture(index);
     }
+  };
+
+  const handleReadPost = (id: number) => {
+    router.push(`/posts?postId=${id}`);
   };
 
   return (
@@ -110,12 +117,12 @@ export default function LectureList() {
                 <div className={`${styles.section} ${styles.noSelect}`}>
                   {section.title}
                   {section.isWritten ? (
-                    <Link
-                      href={`/posts/${sectionIndex}`}
+                    <button
+                      onClick={() => handleReadPost(sectionIndex)}
                       className={styles.readButton}
                     >
                       읽기
-                    </Link>
+                    </button>
                   ) : (
                     <Link href={`/posts/write`} className={styles.writeButton}>
                       쓰기
