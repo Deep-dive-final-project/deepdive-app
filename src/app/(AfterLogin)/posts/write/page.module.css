@@ -36,6 +36,11 @@
   letter-spacing: -0.01875rem;
 }
 
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .uploadButton {
   height: 2.5rem;
   color: white;

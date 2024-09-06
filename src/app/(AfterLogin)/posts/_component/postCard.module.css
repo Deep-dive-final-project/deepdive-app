@@ -7,13 +7,18 @@
 }
 .header {
   display: flex;
+  color: black;
   justify-content: space-between;
 }
 
 .detail {
   text-decoration: none;
-  color: black;
+  color: gray;
 }
 .detail:hover {
   text-decoration: underline;
+}
+
+.content {
+  padding: 1rem 0.5rem;
 }

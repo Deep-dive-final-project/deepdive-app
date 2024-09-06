@@ -5,7 +5,7 @@ export default function PostItem() {
   return (
     <Link href="/posts/2" className={styles.container}>
       <h3>제목</h3>
-      <p>테스트</p>
+      <p>날짜</p>
     </Link>
   );
 }

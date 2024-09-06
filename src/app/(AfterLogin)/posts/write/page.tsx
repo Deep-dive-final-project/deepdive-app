@@ -33,15 +33,18 @@ export default function PostsWrite() {
           </Link>
           <h3 className={styles.headerTitle}>강의노트 작성</h3>
         </div>
-        <div>
+        <div className={styles.buttons}>
+          <button className={styles.uploadButton} disabled={!post.trim()}>
+            AI 요약
+          </button>
           <button className={styles.uploadButton} disabled={!post.trim()}>
             업로드
           </button>
         </div>
       </div>
       <div className={styles.content}>
-        <div>(더미) 파이썬 기초 강좌</div>
-        <div>(더미) 1강 사칙연산</div>
+        <div>제목을 입력하세요</div>
+        <div>강좌 + 섹션</div>
         <textarea
           name=""
           id=""
