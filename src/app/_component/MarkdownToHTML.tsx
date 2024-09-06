@@ -3,7 +3,7 @@
 import ReactMarkdown from "react-markdown";
 
 const sampleMrkdwn = `
-# 마크다운 변환
+## AI가 이렇게 요약해줄거예요
 
 This is a **Markdown** text.
 

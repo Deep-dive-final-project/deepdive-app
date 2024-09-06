@@ -1,6 +1,6 @@
 "use client";
 
-import LectureList from "../_component/LectureList";
+import LectureList from "@/app/_component/LectureList";
 import styles from "./page.module.css";
 import PostList from "./_component/PostList";
 import PostCard from "./_component/PostCard";

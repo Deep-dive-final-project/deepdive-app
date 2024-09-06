@@ -10,9 +10,9 @@ export default function PostCard({ postId }: PostCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
-        <div className={styles.backArrow}>
+        <Link href="/posts" className={styles.backArrow}>
           <svg
-            fill="currentColor"
+            fill="black"
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -25,12 +25,14 @@ export default function PostCard({ postId }: PostCardProps) {
               d="M8 1.5L1.5 8L8 14.5L9.149 13.349L4.612 8.812H14.5V7.187H4.612L9.149 2.649L8 1.5Z"
             ></path>
           </svg>
-        </div>
+        </Link>
         <Link href={`/posts/${postId}`} className={styles.detail}>
-          자세히 보기
+          자세히
         </Link>
       </div>
-      <PostContent postId={postId} />
+      <div className={styles.content}>
+        <PostContent postId={postId} />
+      </div>
     </div>
   );
 }

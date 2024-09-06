@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <div className={styles.container}>
-          <div style={{ color: "gray" }}>nav 메뉴</div>
+          {/* <div style={{ color: "gray" }}>전체 레이아웃</div> */}
           <div className={styles.content}>{children}</div>
         </div>
       </body>
