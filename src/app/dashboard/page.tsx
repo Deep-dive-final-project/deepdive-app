@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import styles from './dashboard.module.css'; // CSS 모듈 임포트
 import { learningPlans, LearningPlan } from '@/data/learningPlan'; // 데이터 파일 임포트
 import { courses, Course } from '@/data/courses'; // 강의 데이터 파일 임포트
-import { popularKeywords, Keyword } from '@/data/popularKeywords'; // 인기 강의 키워드 데이터 파일 임포트
 import { activityStatuses, overallPercentage, expPoints } from '@/data/activityStatus'; // 활동 현황 데이터 파일 임포트
 
 export default function Dashboard() {
@@ -153,41 +152,48 @@ export default function Dashboard() {
 
             {/* 오른쪽 섹션 */}
             <div className={styles.rightContainer}>
-            {/* 인기 강의 키워드 섹션 */}
-            <div className={`${styles.card} ${styles.popularKeywordsCard}`}>
-                <div className={styles.cardTitle}>인기 강의 키워드</div>
-                {/* 인기 강의 키워드 내용 */}
-                <ul className={styles.keywordList}>
-                    {popularKeywords.map((keyword: Keyword) => (
-                        <li key={keyword.rank} className={styles.keywordItem}>
-                            <span className={styles.keywordRank}>{keyword.rank}.</span> {keyword.keyword}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* 나의 활동 현황 섹션 */}
-            <div className={`${styles.card} ${styles.activityStatusCard}`}>
-                <div className={styles.cardTitle}>나의 활동 현황</div>
-                {/* 나의 활동 현황 내용 */}
-                <div className={styles.activitySummary}>
-                    <div className={styles.percentage}>
-                        {overallPercentage}%
+                {/* 나의 최근 강의 노트 목록 */}
+                <div className={`${styles.card} ${styles.notesCard}`}>
+                    <div className={styles.cardTitle}>
+                        나의 노트 <span className={styles.totalNotes}>{plans.length}</span>
                     </div>
-                    <div className={styles.expPoints}>
-                        EXP <br></br><span>{expPoints}</span>
-                    </div>
+                    {/* 노트 목록 */}
+                    <ul className={styles.noteList}>
+                        {plans.map((plan, index) => (
+                            <li key={index}>
+                                <div className={styles.noteItem}>
+                                    {plan.courseName} - {plan.sectionNumber}: {plan.sectionTitle}
+                                </div>
+                                <div className={styles.noteMeta}>
+                                    <span>2일 전</span> {/* 날짜 부분은 예시입니다 */}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-                <hr className={styles.separator} />
-                <ul className={styles.activityDetails}>
-                    {activityStatuses.map((status, index) => (
-                        <li key={index} className={styles.activityItem}>
-                            <span>{status.title}</span>
-                            <span>{status.value}{status.unit}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+
+                {/* 나의 활동 현황 */}
+                <div className={`${styles.card} ${styles.activityStatusCard}`}>
+                    <div className={styles.cardTitle}>나의 활동 현황</div>
+                    {/* 나의 활동 현황 내용 */}
+                    <div className={styles.activitySummary}>
+                        <div className={styles.percentage}>
+                            {overallPercentage}%
+                        </div>
+                        <div className={styles.expPoints}>
+                            EXP <br></br><span>{expPoints}</span>
+                        </div>
+                    </div>
+                    <hr className={styles.separator} />
+                    <ul className={styles.activityDetails}>
+                        {activityStatuses.map((status, index) => (
+                            <li key={index} className={styles.activityItem}>
+                                <span>{status.title}</span>
+                                <span>{status.value}{status.unit}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
         </div>

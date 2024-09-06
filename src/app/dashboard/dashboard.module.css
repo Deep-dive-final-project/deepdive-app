@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: #f0f2f5;
+    background-color: #fff;
     height: 150vh;
     box-sizing: border-box;
   }
@@ -43,6 +43,7 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     flex: 1;
     display: flex;
@@ -337,24 +338,54 @@
     border-radius: 3px;
 }
 
-/* 인기 강의 키워드 스타일 */
-.keywordList {
+/* 나의 강의노트 스타일 */
+.noteList {
     list-style-type: none;
     padding: 0;
     margin: 0;
+    margin-top: 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
-.keywordItem {
-    padding: 8px;
-    font-size: 16px;
+.noteList li{
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.keywordRank {
+.noteList li:hover{
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.noteMeta {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 5px;
+    margin-top: 5px;
+}
+
+.totalNotes {
     color: dodgerblue;
-    font-weight: bold; 
-    font-size: 18px;
-    font-style: italic;
-    margin-right: 5px; 
+    font-weight: bolder;
+    margin-left: 5px;
+}
+
+.noteItem {
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    width: 100%;
+    color: #333;
 }
 
 /* 나의 활동 현황 섹션 */
