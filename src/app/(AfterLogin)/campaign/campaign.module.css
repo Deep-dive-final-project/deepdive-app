@@ -1,0 +1,197 @@
+/* src/app/campaign/campaign.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #fff;
+    height: 100vh;
+  }
+  
+  .header {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .campaignContainer {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    position: relative; /* 위치를 기준으로 슬라이드 효과 */
+  }
+  
+  .leftPanel {
+    flex: 1;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .panelTitle {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .planList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .planItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .editButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .createButton {
+    background-color: rgb(107, 179, 250); /* 파란색 배경 */
+    color: #fff; /* 흰색 텍스트 */
+    border: none;
+    border-radius: 8px; /* 둥근 모서리 */
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: absolute; /* 오른쪽 위 고정 */
+    top: 35px;
+    right: 35px;
+  }
+
+  .createButton:hover {
+    background-color: dodgerblue; /* 호버 시 더 어두운 파란색 */
+  }
+  
+  /* 학습 계획 생성 화면 스타일 */
+  .rightPanel {
+    position: absolute; /* 절대 위치로 설정하여 슬라이드 애니메이션 구현 */
+    top: 0;
+    right: 0;
+    width: 50%; /* 오른쪽 반절 너비로 설정 */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 80vh;
+    transform: translateX(100%); /* 초기 위치를 오른쪽 밖으로 설정 */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* 슬라이드 효과 */
+    opacity: 0;
+    visibility: hidden;
+    overflow-y: auto;
+  }
+  
+  .slideIn {
+    transform: translateX(0); /* 슬라이드 인 애니메이션 */
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .slideOut {
+    transform: translateX(100%); /* 슬라이드 아웃 애니메이션 */
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .formContainer {
+    margin-top: 25px;
+  }
+  
+  .formTitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .textarea {
+    height: 80px;
+    resize: none;
+  }
+  
+  /* 태스크 섹션 스타일 */
+.taskSection {
+    margin-top: 10px;
+  }
+  
+  .taskTitle {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .taskItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 3px 0;
+    font-size: 14px;
+  }
+
+  .taskItem span{
+    margin-left: 5px;
+  }
+
+  .statusSelect {
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+  
+  .buttonSection {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .submitButton {
+    padding: 10px 20px;
+    background-color: dodgerblue;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
