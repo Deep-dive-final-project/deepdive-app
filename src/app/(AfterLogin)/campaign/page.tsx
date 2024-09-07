@@ -125,7 +125,7 @@ export default function Campaign() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>학습 계획</div>
+      <div className={styles.header}>Deep Dive Fullstack + GenAI Course</div>
 
       {/* 학습 계획 만들기 버튼 */}
       <button className={styles.createButton} onClick={handleCreateButtonClick}>+ 학습 계획 만들기</button>

@@ -9,8 +9,10 @@
   .header {
     font-size: 28px;
     font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    margin-left: 10px;
+    text-align: left;
   }
   
   .campaignContainer {
@@ -118,7 +120,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     position: absolute; 
-    top: 35px;
+    top: 45px;
     right: 35px;
   }
 

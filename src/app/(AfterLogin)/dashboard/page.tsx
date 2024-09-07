@@ -49,7 +49,7 @@ export default function Dashboard() {
     return (
         <div className={styles.dashboardContainer}>
         {/* 사용자 인사말 */}
-        <div className={styles.header}>사용자 000님 <br></br> 오늘도 힘찬 하루 되세요!</div>
+        <div className={styles.header}>000님 <br></br> <i>오늘도 힘찬 하루 되세요! 👏</i></div>
         
         {/* 메인 콘텐츠 컨테이너 */}
         <div className={styles.content}>
@@ -153,27 +153,29 @@ export default function Dashboard() {
             {/* 오른쪽 섹션 */}
             <div className={styles.rightContainer}>
                 {/* 나의 최근 강의 노트 목록 */}
-                <div className={`${styles.card} ${styles.notesCard}`}>
+                <div className={`${styles.notesCard}`}>
                     <div className={styles.cardTitle}>
                         나의 노트 <span className={styles.totalNotes}>{plans.length}</span>
                     </div>
-                    {/* 노트 목록 */}
-                    <ul className={styles.noteList}>
-                        {plans.map((plan, index) => (
-                            <li key={index}>
-                                <div className={styles.noteItem}>
-                                    {plan.courseName} - {plan.sectionNumber}: {plan.sectionTitle}
-                                </div>
-                                <div className={styles.noteMeta}>
-                                    <span>2일 전</span> {/* 날짜 부분은 예시입니다 */}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className={styles.noteListContainer}>
+                        {/* 노트 목록 */}
+                        <ul className={styles.noteList}>
+                            {plans.map((plan, index) => (
+                                <li key={index}>
+                                    <div className={styles.noteItem}>
+                                        {plan.courseName} - {plan.sectionNumber}: {plan.sectionTitle}
+                                    </div>
+                                    <div className={styles.noteMeta}>
+                                        <span>2일 전</span> {/* 날짜 예시 */}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
 
                 {/* 나의 활동 현황 */}
-                <div className={`${styles.card} ${styles.activityStatusCard}`}>
+                <div className={`${styles.activityStatusCard}`}>
                     <div className={styles.cardTitle}>나의 활동 현황</div>
                     {/* 나의 활동 현황 내용 */}
                     <div className={styles.activitySummary}>
