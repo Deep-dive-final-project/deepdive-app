@@ -2,11 +2,14 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 2rem;
+  padding-bottom: 8rem;
 }
 .socialLogin {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: gray;
+  font-weight: 300;
 }
 .icons {
   display: flex;
@@ -58,7 +61,8 @@
 .dividerContainer span {
   padding: 0 1rem;
   font-size: 1rem;
-  color: #666;
+  color: gray;
+  font-weight: 300;
 }
 
 .divider {
@@ -114,7 +118,7 @@
 }
 
 .loginOptions a {
-  color: #007bff;
+  color: #2b2d36;
   text-decoration: none;
 }
 
@@ -123,12 +127,20 @@
 }
 
 .languageOptions {
-  margin-top: 2rem;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+
+  display: flex;
+  align-items: center;
   text-align: center;
+  margin-bottom: 3rem;
 }
 
 .languageOptions a {
-  color: #007bff;
+  color: #90929e;
   margin: 0 0.5rem;
   text-decoration: none;
 }

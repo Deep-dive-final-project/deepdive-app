@@ -6,22 +6,20 @@ import styles from "./page.module.css";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState<string>("");
+  const [id, setId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
 
-    // 간단한 유효성 검사 예시
-    if (!email || !password) {
+    if (!id.trim() || !password.trim()) {
       setErrorMessage("Please enter both email and password.");
       return;
     }
 
-    // 로그인 요청을 보내는 예시
-    console.log("Logging in with", { email, password });
-    setErrorMessage(null); // 에러 메시지 초기화
+    console.log("Logging in with", { id, password });
+    setErrorMessage(null);
   };
 
   return (
@@ -68,15 +66,21 @@ export default function LoginPage() {
           <hr className={styles.divider} />
         </div>
         <div className={styles.loginContainer}>
-          <form>
+          <form onSubmit={handleLogin}>
             <input
               type="text"
+              name="id"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
               placeholder="이메일 또는 아이디"
               className={styles.inputField}
             />
             <input
               type="password"
+              name="password"
+              value={password}
               placeholder="비밀번호"
+              onChange={(e) => setPassword(e.target.value)}
               className={styles.inputField}
             />
             <button type="submit" className={styles.loginButton}>
@@ -86,41 +90,14 @@ export default function LoginPage() {
               <label>
                 <input type="checkbox" /> 로그인 상태 유지
               </label>
-              <a href="#">비밀번호 재설정</a>
+              <Link href="#">비밀번호 재설정</Link>
             </div>
           </form>
         </div>
         <div className={styles.languageOptions}>
-          <a href="#">한국어</a> | <a href="#">English</a> |{" "}
-          <a href="#">日本語</a>
+          <Link href="#">한국어</Link> | <Link href="#">English</Link> |
+          <Link href="#">日本語</Link>
         </div>
-
-        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-        <form onSubmit={handleLogin}>
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ width: "100%", padding: "0.5rem" }}
-            />
-          </div>
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "100%", padding: "0.5rem" }}
-            />
-          </div>
-          <button type="submit" style={{ padding: "0.5rem 1rem" }}>
-            Login
-          </button>
-        </form>
       </div>
     </div>
   );
