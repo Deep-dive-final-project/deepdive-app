@@ -7,7 +7,7 @@ export default function TestPage() {
     <>
       <h1>hi!</h1>
       <GetWithCookie />
-      <Get />
+      {/* <Get /> */}
     </>
   );
 }
