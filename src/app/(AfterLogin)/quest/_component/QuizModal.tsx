@@ -35,7 +35,7 @@ export default function QuizModal({
             onClick={(e) => e.stopPropagation()}
           >
             <button onClick={handleCloseModal} className={styles.closeButton}>
-              X
+              ×
             </button>
             {isSubmitted ? (
               <div className={styles.review}>
