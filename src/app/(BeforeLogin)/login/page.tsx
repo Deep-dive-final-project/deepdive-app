@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
 import axios from "axios";
-import { headers } from "next/headers";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -21,11 +23,10 @@ export default function LoginPage() {
       return;
     }
 
-    console.log("Logging in with", { email, password });
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
       {
-        email: "root@root", // email 값 추가
+        email: "rnxogud136@gmail.com", // email 값 추가
         password: "1234", // password 값 추가
       },
       {
@@ -35,8 +36,14 @@ export default function LoginPage() {
         },
       }
     );
-    // const res = await axiosInstance.post(`/api/auth/login`);
-    console.log("res", res);
+
+    console.log("login", res);
+    if (res.status !== 200) {
+      alert("로그인 과정에서 문제 발생. 관리자에게 문의하세요.");
+      return;
+    }
+    router.push("/test");
+
     setErrorMessage(null);
   };
 

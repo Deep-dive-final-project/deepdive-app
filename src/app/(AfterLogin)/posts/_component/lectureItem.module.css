@@ -1,14 +1,3 @@
-.container {
-  width: 400px;
-  min-height: 500px;
-  min-width: 400px;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-}
-.noSelect {
-  user-select: none;
-}
-
 .lectureItem {
   border-bottom: 1px solid #eee;
   padding: 0 10px;
