@@ -60,12 +60,36 @@ export default function Dashboard() {
     }
   };
 
-  return (
-    <div className={styles.dashboardContainer}>
-      {/* 사용자 인사말 */}
-      <div className={styles.header}>
-        사용자 000님 <br></br> 오늘도 힘찬 하루 되세요!
-      </div>
+    return (
+        <div className={styles.dashboardContainer}>
+        {/* 사용자 인사말 */}
+        <div className={styles.header}>000님 <br></br> <i>오늘도 힘찬 하루 되세요! 👏</i></div>
+        
+        {/* 메인 콘텐츠 컨테이너 */}
+        <div className={styles.content}>
+            {/* 왼쪽 섹션 */}
+            <div className={styles.leftContainer}>
+            {/* 진행 중인 학습 계획 */}
+            <div className={`${styles.card} ${styles.learningPlanCard}`}>
+                <div className={styles.cardTitle}>진행 중인 학습 계획</div>
+                {/* 학습 계획 내용 */}
+                <ul className={styles.planItemList}>
+                {plans.map((plan, index) => (
+                    <li key={index} className={styles.planItem}>
+                    <div>{plan.courseName} - {plan.sectionNumber} : {plan.sectionTitle}</div>
+                    <select
+                      className={`${styles.statusSelect} ${styles[plan.status]}`} // 상태에 따른 스타일
+                      value={plan.status}
+                      onChange={(e) => handleStatusChange(index, e.target.value as LearningPlan['status'])}
+                    >
+                      <option value="시작전">시작전</option>
+                      <option value="진행중">진행중</option>
+                      <option value="완료">완료</option>
+                    </select>
+                  </li>
+                ))}
+                </ul>
+            </div>
 
       {/* 메인 콘텐츠 컨테이너 */}
       <div className={styles.content}>
@@ -151,11 +175,56 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                  ))}
-              </div>
-              <button className={styles.sliderButton} onClick={handleNextSlide}>
-                &gt;
-              </button>
+
+                </div>
+            </div>
+
+            {/* 오른쪽 섹션 */}
+            <div className={styles.rightContainer}>
+                {/* 나의 최근 강의 노트 목록 */}
+                <div className={`${styles.notesCard}`}>
+                    <div className={styles.cardTitle}>
+                        나의 노트 <span className={styles.totalNotes}>{plans.length}</span>
+                    </div>
+                    <div className={styles.noteListContainer}>
+                        {/* 노트 목록 */}
+                        <ul className={styles.noteList}>
+                            {plans.map((plan, index) => (
+                                <li key={index}>
+                                    <div className={styles.noteItem}>
+                                        {plan.courseName} - {plan.sectionNumber}: {plan.sectionTitle}
+                                    </div>
+                                    <div className={styles.noteMeta}>
+                                        <span>2일 전</span> {/* 날짜 예시 */}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* 나의 활동 현황 */}
+                <div className={`${styles.activityStatusCard}`}>
+                    <div className={styles.cardTitle}>나의 활동 현황</div>
+                    {/* 나의 활동 현황 내용 */}
+                    <div className={styles.activitySummary}>
+                        <div className={styles.percentage}>
+                            {overallPercentage}%
+                        </div>
+                        <div className={styles.expPoints}>
+                            EXP <br></br><span>{expPoints}</span>
+                        </div>
+                    </div>
+                    <hr className={styles.separator} />
+                    <ul className={styles.activityDetails}>
+                        {activityStatuses.map((status, index) => (
+                            <li key={index} className={styles.activityItem}>
+                                <span>{status.title}</span>
+                                <span>{status.value}{status.unit}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
           </div>
         </div>

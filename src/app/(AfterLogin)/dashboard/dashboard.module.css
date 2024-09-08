@@ -5,13 +5,20 @@
     background-color: #fff;
     height: 150vh;
     box-sizing: border-box;
+    padding: 60px;
   }
   
   .header {
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 20px;
+    margin-top: 10px;
     color: #333;
+  }
+
+  .header i{
+    font-style: normal;
+    font-size: 35px;
   }
   
   .content {
@@ -339,6 +346,11 @@
 }
 
 /* 나의 강의노트 스타일 */
+.noteListContainer{
+    overflow-y: auto;
+    height: 50vh;
+}
+
 .noteList {
     list-style-type: none;
     padding: 0;
@@ -389,6 +401,10 @@
 }
 
 /* 나의 활동 현황 섹션 */
+.activityStatusCard{
+    margin-top: 50px;
+}
+
 .activitySummary {
     display: flex;
     align-items: center;
