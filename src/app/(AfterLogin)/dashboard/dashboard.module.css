@@ -108,16 +108,19 @@
   .시작전 {
     background-color: #ccc;
     color: #333;
+    border: none;
   }
   
   .진행중 {
-    background-color: #add8e6;
-    color: #333;
+    background-color: #c3e9f6;
+    color: rgb(21, 106, 192);
+    border: none;
   }
   
   .완료 {
-    background-color: #97db97;
-    color: #333;
+    background-color: #d2f1d2;
+    color: #195c19;
+    border: none;
   }
   
 /* 퀴즈 섹션 스타일 */

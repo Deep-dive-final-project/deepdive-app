@@ -6,7 +6,7 @@ import styles from './campaign.module.css';
 import { initialPlans, Plan, Task } from '@/data/plans'; // 학습계획 예시 데이터 임포트
 
 export default function Campaign() {
-  const [showCreatePanel, setShowCreatePanel] = useState(false); // 상태로 화면 전환 관리
+  const [showCreatePanel, setShowCreatePanel] = useState(false);
   const [planName, setPlanName] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('');
   const [goal, setGoal] = useState('');
@@ -15,10 +15,15 @@ export default function Campaign() {
     { name: '섹션2', status: '시작전' },
     { name: '섹션3', status: '시작전' },
   ]);
-  const [plans, setPlans] = useState<Plan[]>(initialPlans); // 초기 계획 데이터 사용
+  const [plans, setPlans] = useState<Plan[]>(initialPlans);
+  const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
-  const [editingPlanId, setEditingPlanId] = useState<number | null>(null); // 현재 편집 중인 계획 ID
-  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null); // 현재 선택된 계획 ID
+  const [collapsedSections, setCollapsedSections] = useState<{ [key: string]: boolean }>({
+    시작전: false,
+    진행중: false,
+    완료: false,
+  });
 
   const [error, setError] = useState<{ planName: string; selectedCourse: string }>({
     planName: '',
@@ -27,16 +32,15 @@ export default function Campaign() {
 
   const router = useRouter();
 
-  // 학습 계획 만들기 버튼 클릭 핸들러
   const handleCreateButtonClick = () => {
-      setEditingPlanId(null); // 새로운 계획을 만드는 경우
-      resetForm(); // 폼 초기화
-      setShowCreatePanel(true);
+    setEditingPlanId(null);
+    resetForm();
+    setShowCreatePanel(true);
   };
 
   const handleClosePanel = () => {
-      setShowCreatePanel(false);
-      resetForm();
+    setShowCreatePanel(false);
+    resetForm();
   };
 
   const handleEditButtonClick = (planId: number) => {
@@ -51,18 +55,23 @@ export default function Campaign() {
     setShowCreatePanel(true);
   };
 
-  // 학습 계획 클릭 핸들러
   const handlePlanClick = (planId: number) => {
-    setSelectedPlanId(planId === selectedPlanId ? null : planId); // 클릭한 학습 계획 선택/해제
+    setSelectedPlanId(planId === selectedPlanId ? null : planId);
   };
 
-  // 태스크 상태 변경 핸들러
   const handleTaskStatusChange = (index: number, newStatus: string) => {
     setTasks((prevTasks) => {
       const updatedTasks = [...prevTasks];
       updatedTasks[index].status = newStatus;
       return updatedTasks;
     });
+  };
+
+  const toggleSection = (status: string) => {
+    setCollapsedSections((prevState) => ({
+      ...prevState,
+      [status]: !prevState[status],
+    }));
   };
 
   const resetForm = () => {
@@ -74,10 +83,9 @@ export default function Campaign() {
       { name: '섹션2', status: '시작전' },
       { name: '섹션3', status: '시작전' },
     ]);
-    setError({ planName: '', selectedCourse: '' }); // 오류 메시지 리셋
+    setError({ planName: '', selectedCourse: '' });
   };
 
-  // 학습 계획 수정/생성 핸들러
   const handleSubmitPlan = () => {
     let isValid = true;
     const newError = { planName: '', selectedCourse: '' };
@@ -94,10 +102,9 @@ export default function Campaign() {
 
     setError(newError);
 
-    if (!isValid) return; // 유효성 검사를 통과하지 못한 경우
+    if (!isValid) return;
 
     if (editingPlanId !== null) {
-      // 수정 중인 경우
       setPlans((prevPlans) =>
         prevPlans.map((plan) =>
           plan.id === editingPlanId
@@ -106,60 +113,69 @@ export default function Campaign() {
         )
       );
     } else {
-      // 새로운 계획 추가
       const newPlan: Plan = {
-        id: plans.length + 1, // 임시 ID 생성, 실제로는 서버에서 관리
+        id: plans.length + 1,
         title: planName,
         course: selectedCourse,
         goal,
         tasks,
       };
       setPlans((prevPlans) => [...prevPlans, newPlan]);
-       // '/campaign/complete' 페이지로 이동
       router.push('/campaign/complete');
     }
 
-    // 패널 닫기
     handleClosePanel();
+  };
+
+  const filteredPlans = {
+    시작전: plans.filter((plan) => plan.tasks.every(task => task.status === "시작전")),
+    진행중: plans.filter((plan) => plan.tasks.some(task => task.status === "진행중")),
+    완료: plans.filter((plan) => plan.tasks.every(task => task.status === "완료")),
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>Deep Dive Fullstack + GenAI Course</div>
-
-      {/* 학습 계획 만들기 버튼 */}
       <button className={styles.createButton} onClick={handleCreateButtonClick}>+ 학습 계획 만들기</button>
       
       <div className={styles.campaignContainer}>
-        {/* 학습 계획 리스트 화면 */}
         <div className={styles.leftPanel}>
-          <h2 className={styles.panelTitle}>학습 계획 <i>{plans.length}</i></h2>
-          {/* 리스트 콘텐츠 */}
-          <div className={styles.planList}>
-            {plans.map((plan) => (
-              <div key={plan.id} className={styles.planItem}>
-                <div className={styles.planTitle} onClick={() => handlePlanClick(plan.id)}>
-                  {plan.title}
-                </div>
-                <button
-                  className={styles.editButton}
-                  onClick={() => handleEditButtonClick(plan.id)}
-                >
-                  ✏️
-                </button>
-                {/* 선택된 학습 계획 상세 정보 표시 */}
-                {selectedPlanId === plan.id && (
-                  <div className={styles.planDetails}>
-                    {plan.tasks.map((task, index) => (
-                      <div key={index} className={styles.taskItem}>
-                        <span>{task.name} - {task.status}</span>
+          {Object.entries(filteredPlans).map(([status, plans]) => (
+            <div key={status}>
+              <h3 
+                onClick={() => toggleSection(status)} 
+                className={`${styles.panelTitle} ${collapsedSections[status] ? styles.collapsed : ''}`}
+              >
+                <span className={`${styles.statusBox} ${styles[status]}`}>{status}</span> {plans.length}
+              </h3>
+              {!collapsedSections[status] && (
+                <div className={styles.planList}>
+                  {plans.map((plan) => (
+                    <div key={plan.id} className={styles.planItem}>
+                      <div className={styles.planTitle} onClick={() => handlePlanClick(plan.id)}>
+                        {plan.title}
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                      <button
+                        className={styles.editButton}
+                        onClick={() => handleEditButtonClick(plan.id)}
+                      >
+                        ✏️
+                      </button>
+                      {selectedPlanId === plan.id && (
+                        <div className={styles.planDetails}>
+                          {plan.tasks.map((task, index) => (
+                            <div key={index} className={styles.taskItem}>
+                              <span>{task.name} - {task.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* 학습 계획 생성 화면 */}
@@ -168,9 +184,7 @@ export default function Campaign() {
                 showCreatePanel ? styles.slideIn : styles.slideOut
             }`}
         >
-          <button className={styles.closeButton} onClick={handleClosePanel}>
-              X
-          </button>
+          <button className={styles.closeButton} onClick={handleClosePanel}>X</button>
           <div className={styles.formContainer}>
             <h2 className={styles.formTitle}>{editingPlanId ? '학습 계획 수정하기' : '학습 계획 만들기'}</h2>
 
@@ -221,9 +235,7 @@ export default function Campaign() {
                   <span>{task.name}</span>
                   <select
                     value={task.status}
-                    onChange={(e) =>
-                      handleTaskStatusChange(index, e.target.value)
-                    }
+                    onChange={(e) => handleTaskStatusChange(index, e.target.value)}
                     className={`${styles.statusSelect} ${styles[task.status]}`}
                   >
                     <option value="시작전">시작전</option>
