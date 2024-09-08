@@ -30,6 +30,9 @@ export default function LoginPage() {
       },
       {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       }
     );
     // const res = await axiosInstance.post(`/api/auth/login`);
