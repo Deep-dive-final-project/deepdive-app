@@ -109,7 +109,7 @@
 }
 
 .content {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   margin-left: 0;
   flex-grow: 1;
   transition: margin-left 0.3s ease-in-out;
