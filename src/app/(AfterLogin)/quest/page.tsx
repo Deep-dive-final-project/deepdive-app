@@ -5,7 +5,12 @@ import HistoryList from "./_component/HistoryList";
 export default function QuestPage() {
   return (
     <div className={styles.wrapper}>
-      <h1>복습하기</h1>
+      <div className={styles.title}>
+        <h1 className={`${styles.dailyQuest} ${styles.inactive}`}>
+          일일 퀘스트
+        </h1>
+        <h1 className={styles.review}>복습하기</h1>
+      </div>
       <div className={styles.quizCard}>
         <QuizContainer />
       </div>

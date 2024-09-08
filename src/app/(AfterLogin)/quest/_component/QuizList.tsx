@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import styles from "./quizList.module.css";
 
 export default function QuizList({
@@ -32,7 +33,17 @@ export default function QuizList({
                   ((index + 1) / quizProgress.length) * 100
                 }% - 15px)`,
               }}
-            ></div>
+            >
+              <svg
+                fill="currentColor"
+                width="20"
+                height="20"
+                viewBox="0 0 16 16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M8 0.666656L2 3.33332V7.33332C2 11.0333 4.56 14.4933 8 15.3333C11.44 14.4933 14 11.0333 14 7.33332V3.33332L8 0.666656ZM9.66667 8.39332L10.2667 10.98L8 9.61332L5.73333 10.98L6.33333 8.39999L4.33333 6.67332L6.97333 6.44666L8 4.01332L9.02667 6.43999L11.6667 6.66666L9.66667 8.39332Z"></path>
+              </svg>
+            </div>
           ))}
         </div>
       </div>
@@ -40,9 +51,21 @@ export default function QuizList({
       <div className={styles.quizList}>
         {quizProgress.map((solved, index) => (
           <div key={index} className={styles.quizItem}>
-            <div
-              className={`${styles.quizCircle} ${solved ? styles.solved : ""}`}
-            ></div>
+            {!solved && (
+              <div
+                className={`${styles.quizCircle} ${
+                  solved ? styles.solved : ""
+                }`}
+              ></div>
+            )}
+            {solved && (
+              <Image
+                width={50}
+                height={50}
+                alt="solved"
+                src="https://statics.goorm.io/exp/v1/svgs/badge_achievement.svg"
+              />
+            )}
             <div>{index + 1}번 문제</div>
             <button
               className={styles.solveButton}

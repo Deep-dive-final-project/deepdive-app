@@ -41,6 +41,11 @@
   position: absolute;
   transition-delay: 0.3s;
   top: -2px;
+
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .solved {
