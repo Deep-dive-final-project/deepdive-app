@@ -5,6 +5,9 @@ import styles from "./layout.module.css";
 export const metadata: Metadata = {
   title: "DeepDive App",
   description: "let's make Goorm EXP better",
+  icons: {
+    icon: "/faviconV2.png",
+  },
 };
 
 export default function RootLayout({
