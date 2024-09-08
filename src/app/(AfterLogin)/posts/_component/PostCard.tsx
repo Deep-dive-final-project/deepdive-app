@@ -20,8 +20,8 @@ export default function PostCard({ postId }: PostCardProps) {
             aria-hidden="true"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M8 1.5L1.5 8L8 14.5L9.149 13.349L4.612 8.812H14.5V7.187H4.612L9.149 2.649L8 1.5Z"
             ></path>
           </svg>

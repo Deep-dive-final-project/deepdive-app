@@ -4,21 +4,36 @@ import { useState } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
+import axiosInstance from "@/lib/axios";
+import axios from "axios";
+import { headers } from "next/headers";
 
 export default function LoginPage() {
-  const [id, setId] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleLogin = (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!id.trim() || !password.trim()) {
-      setErrorMessage("Please enter both email and password.");
+    if (!email.trim() || !password.trim()) {
+      setErrorMessage("이메일과 비밀번호를 입력하세요.");
       return;
     }
 
-    console.log("Logging in with", { id, password });
+    console.log("Logging in with", { email, password });
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
+      {
+        email: "root@root", // email 값 추가
+        password: "1234", // password 값 추가
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    // const res = await axiosInstance.post(`/api/auth/login`);
+    console.log("res", res);
     setErrorMessage(null);
   };
 
@@ -69,9 +84,9 @@ export default function LoginPage() {
           <form onSubmit={handleLogin}>
             <input
               type="text"
-              name="id"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="이메일 또는 아이디"
               className={styles.inputField}
             />
@@ -83,7 +98,12 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className={styles.inputField}
             />
-            <button type="submit" className={styles.loginButton}>
+            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+            <button
+              type="submit"
+              className={styles.loginButton}
+              disabled={!!errorMessage}
+            >
               로그인
             </button>
             <div className={styles.loginOptions}>
