@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import styles from "./layout.module.css";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function AfterLoginLayout({
   children,
@@ -162,71 +164,79 @@ export default function AfterLoginLayout({
                   </li>
                 </ul>
                 <ul className={styles.listMenu}>
-                  <li className={styles.list}>
-                    <svg
-                      fill="currentColor"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 16 16"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M1.04224 7.50043H3.04224V14.0004H6.54224V9.50043H9.54224V14.0004H13.0422V7.50043H15.0412L8.04224 1.50043L1.04224 7.50043Z"
-                      ></path>
-                    </svg>
-                    타운홀
-                  </li>
-                  <li className={styles.list}>
-                    <svg
-                      fill="currentColor"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 16 16"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M4.64051 12.501H14.4995V11.2H4.63951L4.64051 12.501ZM4.62951 3.5L4.63051 4.8H14.4995V3.5H4.62951ZM4.63551 8.65H14.4995V7.35H4.63451L4.63551 8.65ZM3.33851 11.2H1.49951V12.501H3.33951L3.33851 11.2ZM3.32851 3.5H1.49951V4.8H3.32951L3.32851 3.5ZM3.33451 8.65H1.49951V7.35H3.33351L3.33451 8.65Z"
-                      ></path>
-                    </svg>
-                    학습 계획
-                  </li>
-                  <li className={styles.list}>
-                    <svg
-                      fill="currentColor"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 16 16"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M8 0.666656L2 3.33332V7.33332C2 11.0333 4.56 14.4933 8 15.3333C11.44 14.4933 14 11.0333 14 7.33332V3.33332L8 0.666656ZM9.66667 8.39332L10.2667 10.98L8 9.61332L5.73333 10.98L6.33333 8.39999L4.33333 6.67332L6.97333 6.44666L8 4.01332L9.02667 6.43999L11.6667 6.66666L9.66667 8.39332Z"></path>
-                    </svg>
-                    퀘스트와 복습을 한 번에!
-                  </li>
-                  <li className={styles.list}>
-                    <svg
-                      fill="currentColor"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 16 16"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M2 2V13.5H9.06134L9.07006 11.9299L12 7.27651V2H2ZM3.96 5.63H10.01V4.53H3.96V5.63ZM3.96 8.23H10.01V7.13H3.96V8.23ZM3.96 10.83H7.27V9.73H3.96V10.83Z"
-                      ></path>
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M11.5 13.1701L10.01 14.0001L10 12.3001L13.01 7.56006L14.5 8.44006L11.5 13.1701Z"
-                      ></path>
-                    </svg>
-                    강의 노트
-                  </li>
+                  <Link className={styles.linkList} href="/dashboard">
+                    <li className={styles.list}>
+                      <svg
+                        fill="currentColor"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M1.04224 7.50043H3.04224V14.0004H6.54224V9.50043H9.54224V14.0004H13.0422V7.50043H15.0412L8.04224 1.50043L1.04224 7.50043Z"
+                        ></path>
+                      </svg>
+                      타운홀
+                    </li>
+                  </Link>
+                  <Link className={styles.linkList} href="/campaign">
+                    <li className={styles.list}>
+                      <svg
+                        fill="currentColor"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M4.64051 12.501H14.4995V11.2H4.63951L4.64051 12.501ZM4.62951 3.5L4.63051 4.8H14.4995V3.5H4.62951ZM4.63551 8.65H14.4995V7.35H4.63451L4.63551 8.65ZM3.33851 11.2H1.49951V12.501H3.33951L3.33851 11.2ZM3.32851 3.5H1.49951V4.8H3.32951L3.32851 3.5ZM3.33451 8.65H1.49951V7.35H3.33351L3.33451 8.65Z"
+                        ></path>
+                      </svg>
+                      학습 계획
+                    </li>
+                  </Link>
+                  <Link className={styles.linkList} href="/quest">
+                    <li className={styles.list}>
+                      <svg
+                        fill="currentColor"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M8 0.666656L2 3.33332V7.33332C2 11.0333 4.56 14.4933 8 15.3333C11.44 14.4933 14 11.0333 14 7.33332V3.33332L8 0.666656ZM9.66667 8.39332L10.2667 10.98L8 9.61332L5.73333 10.98L6.33333 8.39999L4.33333 6.67332L6.97333 6.44666L8 4.01332L9.02667 6.43999L11.6667 6.66666L9.66667 8.39332Z"></path>
+                      </svg>
+                      퀘스트와 복습을 한 번에!
+                    </li>
+                  </Link>
+                  <Link className={styles.linkList} href="/posts">
+                    <li className={styles.list}>
+                      <svg
+                        fill="currentColor"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M2 2V13.5H9.06134L9.07006 11.9299L12 7.27651V2H2ZM3.96 5.63H10.01V4.53H3.96V5.63ZM3.96 8.23H10.01V7.13H3.96V8.23ZM3.96 10.83H7.27V9.73H3.96V10.83Z"
+                        ></path>
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M11.5 13.1701L10.01 14.0001L10 12.3001L13.01 7.56006L14.5 8.44006L11.5 13.1701Z"
+                        ></path>
+                      </svg>
+                      강의 노트
+                    </li>
+                  </Link>
                   <li className={styles.list}>
                     <svg
                       fill="currentColor"
@@ -296,7 +306,7 @@ export default function AfterLoginLayout({
                 <div className={styles.footerContainer}>
                   <div className={styles.profileIconWrapper}>
                     <div className={styles.profileIcon}>
-                      <span className={styles.initial}>원</span>
+                      <span className={styles.initial}>이</span>
                     </div>
                   </div>
                   <div className={styles.footer}>© goorm Inc.</div>

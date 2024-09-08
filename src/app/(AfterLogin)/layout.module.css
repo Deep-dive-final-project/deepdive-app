@@ -126,6 +126,12 @@
   display: flex;
   flex-direction: column;
 }
+.linkList {
+  width: 100%;
+  display: block;
+  align-items: center;
+  text-decoration: none;
+}
 
 .list {
   padding: 0.7rem 1rem;
@@ -197,8 +203,6 @@
 }
 
 .profileIcon {
-  font-size: 18px;
-  font-weight: bold;
   color: #fff;
 }
 
