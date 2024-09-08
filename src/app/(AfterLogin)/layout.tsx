@@ -4,12 +4,15 @@ import { useState } from "react";
 import styles from "./layout.module.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getTitleByPath } from "../utils/getTitleByPath";
 
 export default function AfterLoginLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   const [isHovered, setIsHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -73,7 +76,7 @@ export default function AfterLoginLayout({
               menuOpen ? styles.currentLocationOpen : ""
             }`}
           >
-            타운홀
+            {getTitleByPath(pathname)}
           </span>
         </div>
 
