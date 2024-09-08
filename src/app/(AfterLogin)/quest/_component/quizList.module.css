@@ -1,0 +1,120 @@
+.card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.quizCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.quizSet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.progressBarContainer {
+  width: 80%;
+  height: 17px;
+  background-color: #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+  margin-bottom: 70px;
+  position: relative;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: dodgerblue;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.quizProgress {
+  position: absolute;
+  top: -10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.progressCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ddd;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  transition-delay: 0.3s;
+  top: -2px;
+}
+
+.solved {
+  background-color: dodgerblue;
+}
+
+.quizList {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.quizItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 150px;
+  text-align: center;
+}
+
+.quizCircle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: dodgerblue;
+  transition: background-color 0.3s ease;
+}
+
+.quizCircle.solved {
+  background-color: #ddd;
+}
+
+.solveButton {
+  padding: 5px 10px;
+  border: none;
+  background-color: dodgerblue;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.solveButton:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.solveButton:disabled {
+  background-color: #ccc;
+}
