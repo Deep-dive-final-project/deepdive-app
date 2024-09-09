@@ -8,7 +8,7 @@ export default function GetWithCookie() {
   const fetchData = async () => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/lecture`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quest`,
         {
           withCredentials: true,
         }

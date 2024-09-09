@@ -52,18 +52,24 @@ export default function QuizList({
         {quizProgress.map((solved, index) => (
           <div key={index} className={styles.quizItem}>
             {!solved && (
-              <div
-                className={`${styles.quizCircle} ${
-                  solved ? styles.solved : ""
-                }`}
-              ></div>
+              <Image
+                width={50}
+                height={50}
+                alt="unsolved"
+                src="https://statics.goorm.io/exp/v1/svgs/badge_default.svg"
+              />
+              // <div
+              //   className={`${styles.quizCircle} ${
+              //     solved ? styles.solved : ""
+              //   }`}
+              // ></div>
             )}
             {solved && (
               <Image
                 width={50}
                 height={50}
                 alt="solved"
-                src="https://statics.goorm.io/exp/v1/svgs/badge_achievement.svg"
+                src="https://statics.goorm.io/exp/v1/svgs/badge_success.svg"
               />
             )}
             <div>{index + 1}번 문제</div>

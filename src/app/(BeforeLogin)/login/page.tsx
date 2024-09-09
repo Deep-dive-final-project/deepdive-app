@@ -26,7 +26,7 @@ export default function LoginPage() {
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
       {
-        email: "rnxogud136@gmail.com", // email 값 추가
+        email: "root@root", // email 값 추가
         password: "1234", // password 값 추가
       },
       {
@@ -42,7 +42,7 @@ export default function LoginPage() {
       alert("로그인 과정에서 문제 발생. 관리자에게 문의하세요.");
       return;
     }
-    router.push("/test");
+    router.push("/dashboard");
 
     setErrorMessage(null);
   };
