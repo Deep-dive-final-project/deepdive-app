@@ -239,6 +239,15 @@
   margin-bottom: 20px;
 }
 
+.dateSection{
+  font-size: 12px;
+  text-align: right;
+}
+
+.dateSection span{
+  margin-left: 15px;
+}
+
 .label {
   font-size: 14px;
   color: #333;

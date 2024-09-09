@@ -89,6 +89,15 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
+    position: relative;
+  }
+
+  .planStartDate{
+    font-style: normal;
+    font-size: 10px;
+    position: absolute;
+    left: 10px;
+    bottom: 5px;
   }
 
   .statusSelect {
@@ -255,7 +264,6 @@
     display: flex;
     gap: 15px;
     overflow: hidden;
-    width: calc(100% - 80px); /* 버튼 크기를 제외한 너비 */
     justify-content: center;
 }
 

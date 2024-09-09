@@ -1,9 +1,9 @@
 "use client"; // 클라이언트 컴포넌트로 설정
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./dashboard.module.css"; // CSS 모듈 임포트
-import { learningPlans, LearningPlan } from "@/data/learningPlan"; // 데이터 파일 임포트
-import { courses, Course } from "@/data/courses"; // 강의 데이터 파일 임포트
+
 import {
   activityStatuses,
   overallPercentage,
@@ -11,8 +11,28 @@ import {
 } from "@/data/activityStatus"; // 활동 현황 데이터 파일 임포트
 import QuizContainer from "../_component/QuizContainer";
 
+// 학습 계획의 타입 정의
+interface LearningPlan {
+  plan_id: number;
+  plan_name: string;
+  start_date: string;
+  status?: string; // status 속성 추가 (선택적)
+}
+
+// 추천 강의의 타입 정의
+interface RecommendedLecture {
+  title: string;
+  instructor: string;
+  price: number;
+  lecture_url: string;
+  image_url: string;
+}
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export default function Dashboard() {
-  const [plans, setPlans] = useState<LearningPlan[]>(learningPlans); // 학습 계획 상태 관리
+  const [plans, setPlans] = useState<LearningPlan[]>([]); // 학습 계획 상태 관리
+  const [recommendedLectures, setRecommendedLectures] = useState<RecommendedLecture[]>([]); // 추천 강의 상태 관리
   const [quizProgress, setQuizProgress] = useState<boolean[]>([
     false,
     false,
@@ -20,10 +40,38 @@ export default function Dashboard() {
   ]); // 퀴즈 진행 상태 관리
   const [currentSlide, setCurrentSlide] = useState(0); // 슬라이더 상태 관리
 
+  useEffect(() => {
+    // 학습 계획 가져오기
+    axios
+      .get(`${BACKEND_URL}/api/plan/overview?memberId=1`)
+      .then((response) => {
+        if (response.data.success) {
+          setPlans(response.data.data.contents); // 학습 계획 데이터를 상태에 설정
+        }else {
+          console.error("Failed to fetch learning plans:", response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching learning plans:", error);
+      });
+  
+    // 추천 강의 데이터 가져오기
+    axios
+      .get(`${BACKEND_URL}/api/lecture/recommend?memberId=1`)
+      .then((response) => {
+        if (response.data.success) {
+          setRecommendedLectures(response.data.data.contents); // 추천 강의 데이터를 상태에 설정
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching recommended lectures:", error);
+      });
+  }, []);
+
   // 상태 변경 핸들러
   const handleStatusChange = (
     index: number,
-    newStatus: LearningPlan["status"]
+    newStatus: string
   ) => {
     setPlans((prevPlans) => {
       const newPlans = [...prevPlans];
@@ -47,7 +95,7 @@ export default function Dashboard() {
 
   // 슬라이더 핸들러
   const handleNextSlide = () => {
-    if (currentSlide < courses.length - 3) {
+    if (currentSlide < recommendedLectures.length - 3) {
       // 한 번에 3개의 슬라이드가 보임
       setCurrentSlide(currentSlide + 1);
     }
@@ -63,7 +111,7 @@ export default function Dashboard() {
     <div className={styles.dashboardContainer}>
       {/* 사용자 인사말 */}
       <div className={styles.header}>
-        000님 <br /> <i>오늘도 힘찬 하루 되세요! 👏</i>
+        딥구름 님 <br /> <i>오늘도 힘찬 하루 되세요! 👏</i>
       </div>
 
       {/* 메인 콘텐츠 컨테이너 */}
@@ -78,17 +126,13 @@ export default function Dashboard() {
               {plans.map((plan, index) => (
                 <li key={index} className={styles.planItem}>
                   <div>
-                    {plan.courseName} - {plan.sectionNumber} :{" "}
-                    {plan.sectionTitle}
+                    {plan.plan_name} <i className={styles.planStartDate}>{plan.start_date}</i>
                   </div>
                   <select
-                    className={`${styles.statusSelect} ${styles[plan.status]}`} // 상태에 따른 스타일
-                    value={plan.status}
+                    className={`${styles.statusSelect} ${styles[plan.status || '']}`} // 상태에 따른 스타일
+                    value={plan.status || '시작전'}
                     onChange={(e) =>
-                      handleStatusChange(
-                        index,
-                        e.target.value as LearningPlan["status"]
-                      )
+                      handleStatusChange(index, e.target.value)
                     }
                   >
                     <option value="시작전">시작전</option>
@@ -115,41 +159,25 @@ export default function Dashboard() {
                 &lt;
               </button>
               <div className={styles.slider}>
-                {courses
+                {recommendedLectures
                   .slice(currentSlide, currentSlide + 3)
-                  .map((course: Course) => (
-                    <div key={course.id} className={styles.courseCard}>
+                  .map((lecture, index) => (
+                    <div key={index} className={styles.courseCard}>
                       <img
-                        src={course.imageUrl}
-                        alt={course.title}
+                        src={lecture.image_url}
+                        alt={lecture.title}
                         className={styles.courseImage}
                       />
                       <div className={styles.overlay}>보러 가기</div>
                       <div className={styles.courseDetails}>
-                        <h3 className={styles.courseTitle}>{course.title}</h3>
+                        <h3 className={styles.courseTitle}>{lecture.title}</h3>
                         <p className={styles.courseDescription}>
-                          {course.description}
+                          {lecture.instructor}
                         </p>
                         <div className={styles.coursePrice}>
-                          <span className={styles.originalPrice}>
-                            {course.originalPrice}
-                          </span>
                           <span className={styles.discountedPrice}>
-                            {course.discountedPrice}
+                            {lecture.price}원
                           </span>
-                        </div>
-                        <div className={styles.courseInfo}>
-                          <span
-                            className={styles.students}
-                          >{`+${course.studentsEnrolled}명`}</span>
-                          {course.isUpdated && (
-                            <span className={styles.badge}>업데이트</span>
-                          )}
-                          {course.discountPercentage > 0 && (
-                            <span
-                              className={styles.discountBadge}
-                            >{`${course.discountPercentage}% 할인`}</span>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -175,8 +203,7 @@ export default function Dashboard() {
               {plans.map((plan, index) => (
                 <li key={index}>
                   <div className={styles.noteItem}>
-                    {plan.courseName} - {plan.sectionNumber}:{" "}
-                    {plan.sectionTitle}
+                    {plan.plan_name} - {plan.start_date}
                   </div>
                   <div className={styles.noteMeta}>
                     <span>2일 전</span> {/* 날짜 예시 */}
