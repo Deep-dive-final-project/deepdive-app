@@ -1,17 +1,19 @@
 "use client";
 import Image from "next/image";
 import styles from "./quizList.module.css";
+import { Quiz } from "@/types/quiz";
 
 export default function QuizList({
   handleOpenModal,
-  quizProgress,
+  quizzes,
 }: {
   handleOpenModal: (index: number) => void;
-  quizProgress: boolean[];
+  quizzes: Quiz[];
 }) {
-  const totalSolved = quizProgress.filter(Boolean).length;
-
-  const progressPercentage = (totalSolved / quizProgress.length) * 100;
+  const totalSolved = quizzes.filter(
+    (quiz) => quiz.answer && quiz.feedback
+  ).length;
+  const progressPercentage = (totalSolved / quizzes.length) * 100;
 
   return (
     <div className={styles.quizSet}>
@@ -22,16 +24,14 @@ export default function QuizList({
           style={{ width: `${progressPercentage}%` }}
         ></div>
         <div className={styles.quizProgress}>
-          {quizProgress.map((_, index) => (
+          {quizzes.map((quiz, index) => (
             <div
-              key={index}
+              key={quiz.id}
               className={`${styles.progressCircle} ${
-                index < totalSolved ? styles.solved : ""
+                quiz.answer && quiz.feedback ? styles.solved : ""
               }`}
               style={{
-                left: `calc(${
-                  ((index + 1) / quizProgress.length) * 100
-                }% - 15px)`,
+                left: `calc(${((index + 1) / quizzes.length) * 100}% - 15px)`,
               }}
             >
               <svg
@@ -49,22 +49,17 @@ export default function QuizList({
       </div>
       {/* 퀴즈 문제 리스트 */}
       <div className={styles.quizList}>
-        {quizProgress.map((solved, index) => (
-          <div key={index} className={styles.quizItem}>
-            {!solved && (
+        {quizzes.map((quiz, index) => (
+          <div key={quiz.id} className={styles.quizItem}>
+            {!quiz.answer && !quiz.feedback && (
               <Image
                 width={50}
                 height={50}
                 alt="unsolved"
                 src="https://statics.goorm.io/exp/v1/svgs/badge_default.svg"
               />
-              // <div
-              //   className={`${styles.quizCircle} ${
-              //     solved ? styles.solved : ""
-              //   }`}
-              // ></div>
             )}
-            {solved && (
+            {quiz.answer && quiz.feedback && (
               <Image
                 width={50}
                 height={50}
@@ -72,13 +67,12 @@ export default function QuizList({
                 src="https://statics.goorm.io/exp/v1/svgs/badge_success.svg"
               />
             )}
-            <div>{index + 1}번 문제</div>
+            <div>{quiz.name}</div>
             <button
               className={styles.solveButton}
               onClick={() => handleOpenModal(index)}
-              disabled={solved} // 이미 푼 문제는 버튼 비활성화
             >
-              풀기
+              보기
             </button>
           </div>
         ))}

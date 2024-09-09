@@ -6,7 +6,7 @@ const Posts = [];
 export const handlers = [
   http.post("/api/auth/login", () => {
     console.log("로그인");
-    return HttpResponse.json(User[1], {
+    return HttpResponse.json(User[0], {
       headers: {
         "Set-Cookie": "SESSION=msw-cookie;HttpOnly;Path=/",
       },
@@ -20,7 +20,7 @@ export const handlers = [
       },
     });
   }),
-  http.get("/api/quest", ({ request }) => {
+  http.get("/api/quest", () => {
     return HttpResponse.json([
       {
         id: 1,
@@ -34,37 +34,30 @@ export const handlers = [
         id: 2,
         name: "python",
         content: "python의 주요 특징은 무엇인가?",
-        answer: "python은 문법이 간결하고, 다양한 라이브러리를 제공한다.",
-        feedback: "정확합니다. Python은 초보자에게 인기 있는 언어입니다.",
+        // answer: "python은 문법이 간결하고, 다양한 라이브러리를 제공한다.",
+        // feedback: "정확합니다. Python은 초보자에게 인기 있는 언어입니다.",
         createdDate: "2024-08-20",
       },
       {
         id: 3,
         name: "html",
         content: "html의 주요 역할은 무엇인가?",
-        answer: "html은 웹 페이지의 구조를 정의하는 마크업 언어다.",
-        feedback: "맞습니다. HTML은 웹 개발의 기초를 형성합니다.",
+        // answer: "html은 웹 페이지의 구조를 정의하는 마크업 언어다.",
+        // feedback: "맞습니다. HTML은 웹 개발의 기초를 형성합니다.",
         createdDate: "2024-08-21",
       },
-      {
-        id: 4,
-        name: "sql",
-        content: "sql은 무엇을 하는 언어인가?",
-        answer: "sql은 데이터베이스에서 데이터를 쿼리하고 조작하는 언어다.",
-        feedback:
-          "정확합니다. SQL은 데이터베이스 관리에서 필수적인 도구입니다.",
-        createdDate: "2024-08-22",
-      },
-      {
-        id: 5,
-        name: "c++",
-        content: "c++의 주요 특징은 무엇인가?",
-        answer: "c++은 객체지향과 절차적 프로그래밍을 지원하는 언어다.",
-        feedback:
-          "맞습니다. C++은 복잡한 시스템과 애플리케이션 개발에 적합합니다.",
-        createdDate: "2024-08-23",
-      },
     ]);
+  }),
+  http.post("/api/quest/:questId", ({ request, params }) => {
+    const { questId } = params;
+    console.log("Quest Posted", request, questId);
+    return HttpResponse.json({
+      contents: {
+        strength: "strength",
+        weak: "weak",
+        feedback: "feedback",
+      },
+    });
   }),
   http.get("/api/note", ({ request }) => {
     return HttpResponse.json([
