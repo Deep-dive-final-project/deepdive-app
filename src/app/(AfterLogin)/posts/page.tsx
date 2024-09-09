@@ -1,24 +1,12 @@
-"use client";
+// "use client";
 
-import LectureList from "./_component/LectureList";
-import styles from "./page.module.css";
-import PostList from "./_component/PostList";
-import PostCard from "./_component/PostCard";
-import { useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
+import PostContainer from "./_component/PostContainer";
 
 export default function Posts() {
-  const searchParams = useSearchParams();
-  const postId = searchParams.get("postId");
-
   return (
-    <div className={styles.wrapper}>
-      <h2>강의노트</h2>
-      <div className={styles.layout}>
-        <div style={{ flex: "1" }}>
-          <LectureList />
-        </div>
-        {postId ? <PostCard postId={postId} /> : <PostList />}
-      </div>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <PostContainer />
+    </Suspense>
   );
 }

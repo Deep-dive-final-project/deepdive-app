@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import styles from "./lectureList.module.css";
-import LectureItem from "./LectureItem"; // 분리된 컴포넌트
-import axios from "axios"; // 서버 요청을 위한 라이브러리
+import LectureItem from "./LectureItem";
+import axios from "axios";
 import axiosInstance from "@/lib/axios";
 
 interface Section {
