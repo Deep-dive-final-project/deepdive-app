@@ -2,13 +2,19 @@
 
 import { useAuth } from "@/app/context/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export default function Fetch() {
   const { accessToken, fetchWithAuth } = useAuth();
+  const fetchPosts = async () => {
+    const { data: {contents} } = await fetchWithAuth("/api/note");
+    console.log("note??", contents)
+    return contents
+  }
 
   const fetchTasksByPlanId = async (planId: number) => {
-    const response = await fetchWithAuth(`/api/task/${planId}`);
-    console.log("fetch! tasks!", response);
+    const {data} = await fetchWithAuth(`/api/task/${planId}`);
+    console.log("fetch! tasks!", data);
     // if (!response) {
     //   return;
     // }
@@ -25,7 +31,7 @@ export default function Fetch() {
     //   return null;
     // }
     let plans = [{
-      planId: 3
+      planId: 4
     }]
 
     const plansWithTasks = await Promise.all(
@@ -40,6 +46,10 @@ export default function Fetch() {
 
     return plansWithTasks;
   }});
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return <>div</>
 }

@@ -29,7 +29,6 @@ export default function PlanList() {
     if (!res) {
       return;
     }
-    console.log("res", res)
     return res as Task[];
   };
 
@@ -44,6 +43,7 @@ export default function PlanList() {
       const plansWithTasks = await Promise.all(
         plans.map(async (plan) => {
           const tasks = await fetchTasksByPlanId(plan.plan_id);
+          console.log(tasks);
           if (!tasks) {
             return { ...plan }
           }
