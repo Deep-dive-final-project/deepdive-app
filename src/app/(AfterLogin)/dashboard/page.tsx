@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useAuth from "@/lib/auth";
 import styles from "./dashboard.module.css"; // CSS 모듈 임포트
 
 import {
@@ -28,8 +29,6 @@ interface RecommendedLecture {
   image_url: string;
 }
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
 export default function Dashboard() {
   const [plans, setPlans] = useState<LearningPlan[]>([]); // 학습 계획 상태 관리
   const [recommendedLectures, setRecommendedLectures] = useState<RecommendedLecture[]>([]); // 추천 강의 상태 관리
@@ -40,33 +39,33 @@ export default function Dashboard() {
   ]); // 퀴즈 진행 상태 관리
   const [currentSlide, setCurrentSlide] = useState(0); // 슬라이더 상태 관리
 
+  const { accessToken, fetchWithAuth, refreshAccessToken } = useAuth();
+
   useEffect(() => {
-    // 학습 계획 가져오기
-    axios
-      .get(`${BACKEND_URL}/api/plan/overview?memberId=1`)
-      .then((response) => {
-        if (response.data.success) {
-          setPlans(response.data.data.contents); // 학습 계획 데이터를 상태에 설정
-        }else {
-          console.error("Failed to fetch learning plans:", response.data.message);
+    const fetchData = async () => {
+      try {
+        // 학습 계획 가져오기
+        const planResponse = await fetchWithAuth("/api/plan/overview");
+        if (planResponse.data.success) {
+          setPlans(planResponse.data.data.contents); // 학습 계획 데이터를 상태에 설정
+        } else {
+          console.error("Failed to fetch learning plans:", planResponse.data.message);
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching learning plans:", error);
-      });
-  
-    // 추천 강의 데이터 가져오기
-    axios
-      .get(`${BACKEND_URL}/api/lecture/recommend?memberId=1`)
-      .then((response) => {
-        if (response.data.success) {
-          setRecommendedLectures(response.data.data.contents); // 추천 강의 데이터를 상태에 설정
+
+        // 추천 강의 데이터 가져오기
+        const lectureResponse = await fetchWithAuth("/api/lecture/recommend");
+        if (lectureResponse.data.success) {
+          setRecommendedLectures(lectureResponse.data.data.contents); // 추천 강의 데이터를 상태에 설정
+        } else {
+          console.error("Failed to fetch recommended lectures:", lectureResponse.data.message);
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching recommended lectures:", error);
-      });
-  }, []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [accessToken, fetchWithAuth, refreshAccessToken]);
 
   // 상태 변경 핸들러
   const handleStatusChange = (
