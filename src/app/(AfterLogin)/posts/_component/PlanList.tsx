@@ -16,7 +16,6 @@ export default function PlanList() {
   const fetchPlans = async () => {
     const {getPlanForPlanPageResponseDtoList: data
     } = await fetchWithAuth('/api/plan');
-    console.log("fetch! plans!", data);
     if (!data) {
       return;
     }
@@ -25,7 +24,6 @@ export default function PlanList() {
 
   const fetchTasksByPlanId = async (planId: number) => {
     const res = await fetchWithAuth(`/api/task/${planId}`);
-    console.log("fetch! tasks!", res);
     if (!res) {
       return;
     }
@@ -43,7 +41,7 @@ export default function PlanList() {
       const plansWithTasks = await Promise.all(
         plans.map(async (plan) => {
           const tasks = await fetchTasksByPlanId(plan.plan_id);
-          console.log(tasks);
+          
           if (!tasks) {
             return { ...plan }
           }
