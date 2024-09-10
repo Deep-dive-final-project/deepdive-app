@@ -204,6 +204,8 @@
   height: 2rem;
   background-color: #a173f9;
   border-radius: 50%;
+  user-select: none;
+  cursor: pointer;
 }
 
 .profileIcon {
