@@ -1,6 +1,15 @@
 import { http, HttpResponse, StrictResponse } from "msw";
+import jwt from "jsonwebtoken";
 
-const User = [{ email: "root@root", password: "1234" }];
+const SECRET_KEY = "your-secret-key";
+const REFRESH_SECRET_KEY = "your-refresh-secret-key";
+const ACCESS_TOKEN_EXPIRES_IN = "15m";
+const REFRESH_TOKEN_EXPIRES_IN = "7d";
+
+const User = [
+  { email: "root@root", password: "1234" },
+  { email: "rnxogud136@gmail.com", password: "1234" },
+];
 let quests = [
   {
     id: 1,
@@ -27,15 +36,115 @@ let quests = [
     createdDate: "2024-08-21",
   },
 ];
+type LoginRequestBody = {
+  email: string;
+  password: string;
+};
+type RefreshRequestBody = {
+  refresh_token: string;
+};
 
 export const handlers = [
-  http.post("/api/auth/login", () => {
-    console.log("로그인");
-    return HttpResponse.json(User[0], {
-      headers: {
-        "Set-Cookie": "SESSION=msw-cookie;HttpOnly;Path=/",
-      },
+  http.post<{}, LoginRequestBody>("/api/auth/login", async ({ request }) => {
+    const { email, password } = await request.json();
+
+    console.log("로그인", email, password);
+
+    const user = User.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (!user) {
+      console.log("유효하지 않은 로그인");
+      return HttpResponse.json(
+        { success: false, data: null, error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    const accessToken = jwt.sign({ email: user.email }, SECRET_KEY, {
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
+
+    const refreshToken = jwt.sign({ email: user.email }, REFRESH_SECRET_KEY, {
+      expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+    });
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      },
+      error: null,
+    });
+  }),
+
+  http.post<{}, RefreshRequestBody>(
+    "/api/auth/refresh-token",
+    async ({ request }) => {
+      const { refresh_token } = await request.json();
+
+      try {
+        const decoded = jwt.verify(refresh_token, REFRESH_SECRET_KEY);
+
+        const newAccessToken = jwt.sign({ email: decoded.email }, SECRET_KEY, {
+          expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+        });
+
+        return HttpResponse.json({
+          success: true,
+          data: {
+            access_token: newAccessToken,
+          },
+          error: null,
+        });
+      } catch (error) {
+        return HttpResponse.json(
+          { success: false, data: null, error: "Invalid refresh token" },
+          { status: 403 }
+        );
+      }
+    }
+  ),
+
+  http.get("/api/protected-resource", ({ request }) => {
+    const authHeader = request.headers.get("Authorization");
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return HttpResponse.json(
+        {
+          success: false,
+          data: null,
+          error: "Unauthorized, Bearer token missing",
+        },
+        { status: 401 }
+      );
+    }
+    const token = authHeader.split(" ")[1];
+
+    try {
+      // 토큰 검증
+      const decoded = jwt.verify(token, SECRET_KEY);
+
+      return HttpResponse.json(
+        {
+          success: true,
+          data: [{ id: 1 }, { id: 2 }],
+          error: null,
+        },
+        {}
+      );
+    } catch (error) {
+      return HttpResponse.json(
+        {
+          success: false,
+          data: null,
+          error: "Unauthorized, invalid token",
+        },
+        { status: 401 }
+      );
+    }
   }),
   http.post("/api/auth/logout", () => {
     console.log("로그아웃");

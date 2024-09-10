@@ -1,12 +1,13 @@
 import Get from "./_component/Get";
 import GetWithCookie from "./_component/GetWithCookie";
-GetWithCookie;
+import Post from "./_component/Post";
 
 export default function TestPage() {
   return (
     <>
       <h1>hi!</h1>
-      <GetWithCookie />
+      <Post />
+      {/* <GetWithCookie /> */}
       {/* <Get /> */}
     </>
   );

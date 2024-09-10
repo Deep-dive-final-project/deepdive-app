@@ -7,9 +7,11 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
 import axios from "axios";
+import useAuth from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -23,23 +25,10 @@ export default function LoginPage() {
       return;
     }
 
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
-      {
-        email: "root@root", // email 값 추가
-        password: "1234", // password 값 추가
-      },
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
+    const isSuccess = await login({ email, password: "1234" });
 
-    console.log("login", res);
-    if (res.status !== 200) {
-      alert("로그인 과정에서 문제 발생. 관리자에게 문의하세요.");
+    if (!isSuccess) {
+      alert("로그인 실패! 아이디를 확인해주세요");
       return;
     }
     router.push("/dashboard");
