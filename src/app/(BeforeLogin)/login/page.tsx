@@ -29,10 +29,10 @@ export default function LoginPage() {
     const isSuccess = await login({ email, password });
 
     if (!isSuccess) {
-      alert("로그인 실패! 아이디를 확인해주세요");
+      alert("로그인 실패! 아이디와 비밀번호를 확인해주세요");
       return;
     }
-    router.push("/dashboard");
+    router.push("/");
 
     setErrorMessage(null);
   };

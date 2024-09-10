@@ -1,12 +1,73 @@
+"use client";
+
 import styles from "./page.module.css";
 import Link from "next/link";
 import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/app/context/AuthProvider";
+import { Post, PostContent } from "@/types/post";
 
-type Props = {
+type PostPageProps = {
   params: { postId: string };
 };
-export default async function Profile({ params }: Props) {
+export default function PostPage({ params }: PostPageProps) {
+  const queryClient = useQueryClient();
   const { postId } = params;
+  const { fetchWithAuth } = useAuth();
+
+  const fetchPost = async () => {
+    try {
+      const response = await fetchWithAuth("/api/note/"+postId);
+      const { data } = response;
+      console.log("Post Id:",postId, data);
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching post ",postId, error);
+    }
+    return;
+  }
+
+  const deletePost = async () => {
+    return await fetchWithAuth(`/api/posts/${postId}`, {
+      method: "DELETE",
+    });
+  };
+
+  const { data: post, isLoading: isFetchPostLoading } = useQuery<PostContent, Error>({
+    queryKey: ["post"],
+    queryFn: fetchPost,
+  });
+
+  const { mutate: deletePostMutate, isError: isDeletePostError, error: deleteError, isPending: isDeletePostPending } = useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+
+
+  if (isFetchPostLoading || isDeletePostPending) {
+    return <div>잠시만 기다려주세요...</div>;
+  }
+  if (isDeletePostError) {
+    console.error("ERR Delete Post",deleteError)
+    alert("강의노트 삭제 중 에러 발생.")
+  }
+  if (!post) {
+    return <div style={{ padding: "3rem" }}>포스트가 없습니다.</div>;
+  }
+
+  const handleUpdatePost = async () => {
+    // note 수정
+  }
+  const handleDeletePost = () => {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      deletePostMutate();
+    }
+    return;
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
@@ -30,7 +91,7 @@ export default async function Profile({ params }: Props) {
           <h3 className={styles.headerTitle}>나의 강의노트</h3>
         </div>
         <div className={styles.headerRight}>
-          <button className={styles.updateButton}>
+          <button className={styles.updateButton} onClick={handleUpdatePost}>
             <svg
               fill="currentColor"
               width="16"
@@ -47,7 +108,7 @@ export default async function Profile({ params }: Props) {
             </svg>
             수정하기
           </button>
-          <button className={styles.deleteButton}>
+          <button className={styles.deleteButton} onClick={handleDeletePost}>
             <svg
               fill="currentColor"
               width="16"
@@ -68,14 +129,15 @@ export default async function Profile({ params }: Props) {
       </div>
       <div className={styles.card}>
         <div>
-          <div className={styles.cardTitle}>강의노트 제목</div>
+          <div className={styles.cardTitle}>강의 제목</div>
           <div className={styles.cardDetail}>3시간 전</div>
         </div>
         <div className={styles.summary}>
-          {/* <MarkdownToHTML /> */}
+          <MarkdownToHTML content={post.summary} />
         </div>
         <div className={styles.rawText}>
           <h5>원본 글</h5>
+          <p>{post.content}</p>
         </div>
       </div>
     </div>

@@ -34,10 +34,9 @@ export default function QuizContainer() {
   const fetchQuizzes = async () => {
     try {
       const response = await fetchWithAuth("/api/quest");
-      const { data } = response;
-      console.log("res", data.dtos);
+      const { data: { dtos } } = response;
 
-      return data.dtos;
+      return dtos;
     } catch (error) {
       console.error("Error fetching quests", error);
     }
@@ -84,6 +83,7 @@ export default function QuizContainer() {
   }
 
   if (!quizzes) {
+    queryClient.invalidateQueries({ queryKey: ["quizzes"] });
     return <div style={{ height: "243px" }}>풀 문제가 없습니다.</div>;
   }
 

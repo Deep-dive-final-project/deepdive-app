@@ -1,11 +1,15 @@
 import Link from "next/link";
 import styles from "./postItem.module.css";
+import { Post } from "@/types/post";
 
-export default function PostItem() {
+type PostItemProps = {
+  post: Post;
+}
+
+export default function PostItem({ post }: PostItemProps) {
   return (
-    <Link href="/posts/2" className={styles.container}>
-      <h3>제목</h3>
-      <p>날짜</p>
+    <Link className={styles.container} href={`/posts/${post.noteId}`}>
+      <h3>{post.title}</h3>
     </Link>
   );
 }
