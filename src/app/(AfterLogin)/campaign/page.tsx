@@ -7,8 +7,6 @@
 사용자가 있는 학습 계획을 누르면 /api/plan/{planId}로 내용 얻어오고(아래로 토글)
 동시에 /api/plan/{planId}에서 태스크 내용도 같이 가져와서 출력
 
-수정 대신 삭제 버튼 만들어서 /api/plan/{plan_id}으로 삭제
-
 새로 만들기는 강의 불러오기 /api/lecture하고
 강의 선택하면 /api/lecture/{lecture_id}/section 불러와지게 하고
 /api/plan으로 데이터 생성
@@ -63,12 +61,11 @@ interface Section {
 export default function Campaign() {
   const [showCreatePanel, setShowCreatePanel] = useState(false);
   const [planName, setPlanName] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState<number | "">(""); // lecture_id를 저장하는 상태로 변경
   const [goal, setGoal] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [lectures, setLectures] = useState<Lecture[]>([]);
-  const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
@@ -100,42 +97,29 @@ export default function Campaign() {
         const planResponse = await fetchWithAuth("/api/plan/overview");
         console.log("Plan Response:", planResponse);
 
-        if (planResponse && planResponse.getPlanForMainPageResponseDtos) {
-          const fetchedPlans = planResponse.getPlanForMainPageResponseDtos.map(
-            (plan: any) => ({
-              id: plan.planId,
-              plan_name: plan.planTitle,
-              start_date: new Date(plan.startDate).toISOString().split("T")[0],
-              state: "pending", // 기본 상태값 설정
-            })
-          );
+        if (planResponse) {
+          const fetchedPlans = planResponse.map((plan: any) => ({
+            id: plan.planId,
+            plan_name: plan.planTitle,
+            start_date: new Date(plan.startDate).toISOString().split("T")[0],
+            state: "pending", // 기본 상태값 설정
+          }));
 
-          // 각 학습 계획의 세부 정보 가져오기
-          const plansWithDetails = await Promise.all(
-            fetchedPlans.map(async (plan: Plan) => {
-              const detailResponse = await fetchWithAuth(`/api/plan/${plan.id}`);
-              if (detailResponse.success && detailResponse.data) {
-                return {
-                  ...plan,
-                  state: detailResponse.data.state,
-                  tasks: detailResponse.data.tasks || [],
-                };
-              }
-              return plan;
-            })
-          );
-
-          setPlans(plansWithDetails);
+          setPlans(fetchedPlans);
         } else {
           console.error("Failed to fetch learning plans:", planResponse);
         }
 
         // 강의 목록 데이터 가져오기
         const lectureResponse = await fetchWithAuth("/api/lecture");
+        console.log("lectureResponse:", lectureResponse);
         if (lectureResponse.success) {
-          setLectures(lectureResponse.data.contents);
+          setLectures(lectureResponse.contents);
         } else {
-          console.error("Failed to fetch lecture:", lectureResponse.message || "Unknown error");
+          console.error(
+            "Failed to fetch lecture:",
+            lectureResponse.message || "Unknown error"
+          );
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -146,7 +130,6 @@ export default function Campaign() {
   }, []);
 
   const handleCreateButtonClick = () => {
-    setEditingPlanId(null);
     resetForm();
     setShowCreatePanel(true);
   };
@@ -156,28 +139,22 @@ export default function Campaign() {
     resetForm();
   };
 
-  const handleEditButtonClick = async (planId: number) => {
+  const handlePlanClick = async (planId: number) => {
+    if (selectedPlanId === planId) {
+      setSelectedPlanId(null); // 이미 열려 있는 경우 닫기
+      return;
+    }
+
     try {
       const response = await fetchWithAuth(`/api/plan/${planId}`);
       if (response.success) {
         const plan = response.data;
-        setEditingPlanId(planId);
-        setPlanName(plan.plan_name);
-        setSelectedCourse(plan.course || "");
-        setGoal(plan.goal || "");
-        setTasks(plan.tasks);
-        setStartDate(plan.start_date);
-        setEndDate(plan.end_date);
-        setDescription(plan.description);
-        setShowCreatePanel(true);
+        setSelectedPlanId(planId);
+        setTasks(plan.tasks); // 태스크 내용 설정
       }
     } catch (error) {
       console.error("플랜을 가져오는 중 오류 발생:", error);
     }
-  };
-
-  const handlePlanClick = (planId: number) => {
-    setSelectedPlanId(planId === selectedPlanId ? null : planId);
   };
 
   const handleTaskStatusChange = (index: number, newStatus: string) => {
@@ -224,102 +201,42 @@ export default function Campaign() {
 
     if (!isValid) return;
 
-    if (editingPlanId !== null) {
-      // 학습 계획 수정 로직
-      fetchWithAuth(`/api/plan/${editingPlanId}`, {
-        method: "PUT",
-        data: {
-          plan_name: planName,
-          course: selectedCourse,
-          goal,
-          tasks,
-          start_date: startDate,
-          end_date: endDate,
-        },
+    // 새로운 학습 계획 생성 로직
+    fetchWithAuth("/api/plan", {
+      method: "POST",
+      data: {
+        plan_name: planName,
+        course: selectedCourse,
+        goal,
+        tasks,
+        start_date: startDate,
+        end_date: endDate,
+      },
+    })
+      .then((response) => {
+        if (response.data.success) {
+          const newPlan: Plan = {
+            id: response.data.data.plan_id,
+            plan_name: planName,
+            course: selectedCourse.toString(),
+            goal,
+            tasks,
+            state: "pending",
+          };
+          setPlans((prevPlans) => [...prevPlans, newPlan]);
+          router.push("/campaign/complete");
+        }
       })
-        .then((response) => {
-          if (response.data.success) {
-            setPlans((prevPlans) =>
-              prevPlans.map((plan) =>
-                plan.id === editingPlanId
-                  ? {
-                      ...plan,
-                      plan_name: planName,
-                      course: selectedCourse,
-                      goal,
-                      tasks,
-                      start_date: startDate,
-                      end_date: endDate,
-                    }
-                  : plan
-              )
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("학습 계획 수정 중 오류 발생:", error);
-        });
-    } else {
-      // 새로운 학습 계획 생성 로직
-      fetchWithAuth("/api/plan", {
-        method: "POST",
-        data: {
-          plan_name: planName,
-          course: selectedCourse,
-          goal,
-          tasks,
-          start_date: startDate,
-          end_date: endDate,
-        },
-      })
-        .then((response) => {
-          if (response.data.success) {
-            const newPlan: Plan = {
-              id: response.data.data.plan_id,
-              plan_name: planName,
-              course: selectedCourse,
-              goal,
-              tasks,
-              state: "pending",
-            };
-            setPlans((prevPlans) => [...prevPlans, newPlan]);
-            router.push("/campaign/complete");
-          }
-        })
-        .catch((error) => {
-          console.error("새 학습 계획 생성 중 오류 발생:", error);
-        });
-    }
+      .catch((error) => {
+        console.error("새 학습 계획 생성 중 오류 발생:", error);
+      });
 
     handleClosePanel();
   };
 
   const handleCourseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCourseId = Number(event.target.value);
-    const selectedLecture = lectures.find(
-      (lecture) => lecture.lecture_id === selectedCourseId
-    );
-
-    if (selectedLecture) {
-      setSelectedCourse(selectedLecture.lecture_name);
-
-      // 선택한 강의의 섹션 데이터를 가져와서 태스크로 설정
-      fetchWithAuth(`/api/lecture/${selectedCourseId}/section`)
-        .then((response) => {
-          if (response.data.success) {
-            const sections = response.data.data.contents;
-            setTasks(
-              sections.map((section: Section) => ({
-                name: section.section_name,
-                status: "시작전",
-              }))
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("강의 섹션을 가져오는 중 오류 발생:", error);
-        });
-    }
+    setSelectedCourse(selectedCourseId); // lecture_id를 저장
   };
 
   const filteredPlans = {
@@ -360,15 +277,9 @@ export default function Campaign() {
                       >
                         {plan.plan_name}
                       </div>
-                      <button
-                        className={styles.editButton}
-                        onClick={() => handleEditButtonClick(plan.id)}
-                      >
-                        ✏️
-                      </button>
                       {selectedPlanId === plan.id && (
                         <div className={styles.planDetails}>
-                          {plan.tasks.map((task, index) => (
+                          {tasks.map((task, index) => (
                             <div key={index} className={styles.taskItem}>
                               <span>
                                 {task.name} - {task.status}
@@ -395,9 +306,7 @@ export default function Campaign() {
             X
           </button>
           <div className={styles.formContainer}>
-            <h2 className={styles.formTitle}>
-              {editingPlanId ? "학습 계획 수정하기" : "학습 계획 만들기"}
-            </h2>
+            <h2 className={styles.formTitle}>학습 계획 만들기</h2>
 
             {/* 학습 계획 제목 입력 */}
             <label className={styles.label}>
@@ -493,7 +402,7 @@ export default function Campaign() {
                 className={styles.submitButton}
                 onClick={handleSubmitPlan}
               >
-                {editingPlanId ? "학습 계획 수정하기" : "학습 계획 시작하기"}
+                학습 계획 시작하기
               </button>
             </div>
           </div>
