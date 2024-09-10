@@ -7,7 +7,8 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import axiosInstance from "@/lib/axios";
 import axios from "axios";
-import useAuth from "@/lib/auth";
+import { useAuth } from "@/app/context/AuthProvider";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function LoginPage() {
       return;
     }
 
-    const isSuccess = await login({ email, password: "1234" });
+    const isSuccess = await login({ email, password });
 
     if (!isSuccess) {
       alert("로그인 실패! 아이디를 확인해주세요");
@@ -82,7 +83,7 @@ export default function LoginPage() {
         <div className={styles.loginContainer}>
           <form onSubmit={handleLogin}>
             <input
-              type="text"
+              type="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

@@ -9,6 +9,8 @@ const REFRESH_TOKEN_EXPIRES_IN = "7d";
 const User = [
   { email: "root@root", password: "1234" },
   { email: "rnxogud136@gmail.com", password: "1234" },
+  {email: "ss@ss", password: "1234"},
+  {email: "aa@aa", password: "1234"}
 ];
 let quests = [
   {
@@ -81,7 +83,7 @@ export const handlers = [
   }),
 
   http.post<{}, RefreshRequestBody>(
-    "/api/auth/refresh-token",
+    "/api/auth/access-reissue",
     async ({ request }) => {
       const { refresh_token } = await request.json();
 

@@ -6,15 +6,9 @@ import QuizList from "../quest/_component/QuizList";
 import QuizModal from "../quest/_component/QuizModal";
 import { Quiz, QuizFeedback } from "@/types/quiz";
 import axiosInstance from "@/lib/axios";
+import { useAuth } from "@/app/context/AuthProvider";
 
-const fetchQuizzes = async (): Promise<Quiz[]> => {
-  const {
-    data: { data },
-  } = await axiosInstance.get("/api/quest?memberId=2");
-  const res = await axiosInstance.get("/api/quest?memberId=2");
-  console.log("data", data);
-  return data?.dtos;
-};
+
 
 const submitAnswer = async ({
   quizId,
@@ -35,6 +29,20 @@ const submitAnswer = async ({
 
 export default function QuizContainer() {
   const queryClient = useQueryClient();
+  const { fetchWithAuth } = useAuth();
+
+  const fetchQuizzes = async () => {
+    try {
+      const response = await fetchWithAuth("/api/quest");
+      const { data } = response;
+      console.log("res", data.dtos);
+
+      return data.dtos;
+    } catch (error) {
+      console.error("Error fetching quests", error);
+    }
+    return;
+  };
 
   const { data: quizzes, isLoading } = useQuery({
     queryKey: ["quizzes"],

@@ -1,6 +1,6 @@
 "use client";
 
-import useAuth from "@/lib/auth";
+import { useAuth } from "@/app/context/AuthProvider";
 import { useEffect } from "react";
 
 export default function Post() {

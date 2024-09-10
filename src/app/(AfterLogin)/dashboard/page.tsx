@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useAuth from "@/lib/auth";
+import { useAuth } from "@/app/context/AuthProvider";
 import styles from "./dashboard.module.css"; // CSS 모듈 임포트
 
 import {
