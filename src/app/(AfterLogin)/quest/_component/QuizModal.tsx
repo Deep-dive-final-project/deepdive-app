@@ -1,8 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./quizModal.module.css";
 import type { Quiz } from "@/types/quiz";
-import axiosInstance from "@/lib/axios";
 
 export default function QuizModal({
   isModalOpen,
@@ -27,6 +26,12 @@ export default function QuizModal({
     setIsSubmitted(true);
   };
 
+  useEffect(() => {
+    if (!!quiz.answer && !!quiz.feedback) {
+      setIsSubmitted(true);
+    }
+  }, []);
+
   return (
     <>
       {isModalOpen && (
@@ -40,24 +45,31 @@ export default function QuizModal({
             </button>
             {isSubmitted ? (
               <div className={styles.review}>
-                <p className={styles.question}>질문: {quiz.content}</p>
-                <p className={styles.answer}>제출한 답변: {submittedAnswer}</p>
-                <p className={styles.result}>정답여부: ...</p>
-                <p className={styles.explanation}>정답 해설: ...</p>
+                <h3 className={styles.name}>{quiz.name}</h3>
+                <div className={styles.modalContainer}>
+                  <p className={styles.question}>질문: {quiz.content}</p>
+                  <p className={styles.answer}>제출한 답변: {quiz.answer}</p>
+                  <p className={styles.explanation}>
+                    정답 해설: {quiz.feedback}
+                  </p>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className={styles.form}>
-                <p className={styles.question}>질문: {quiz.content}</p>
-                <input
-                  type="text"
-                  className={styles.input}
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="답변을 입력하세요"
-                />
-                <button type="submit" className={styles.submitButton}>
-                  제출
-                </button>
+                <h3 className={styles.name}>{quiz.name}</h3>
+                <div className={styles.modalContainer}>
+                  <p className={styles.question}>질문: {quiz.content}</p>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="답변을 입력하세요"
+                  />
+                  <button type="submit" className={styles.submitButton}>
+                    제출
+                  </button>
+                </div>
               </form>
             )}
           </div>

@@ -1,15 +1,6 @@
 import styles from "./lectureItem.module.css";
 import Link from "next/link";
-
-interface Section {
-  title: string;
-  isWritten: boolean;
-}
-
-interface Lecture {
-  title: string;
-  sections: Section[];
-}
+import { Lecture } from "@/types/lecture";
 
 interface LectureItemProps {
   lecture: Lecture;
@@ -68,7 +59,7 @@ export default function LectureItem({
 
       {isOpen && (
         <ul className={styles.sections}>
-          {lecture.sections.map((section, sectionIndex) => (
+          {lecture?.sections?.map((section, sectionIndex) => (
             <li key={sectionIndex} className={styles.sectionItem}>
               <div className={`${styles.section} ${styles.noSelect}`}>
                 {section.title}

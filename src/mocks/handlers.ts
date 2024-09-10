@@ -1,7 +1,32 @@
 import { http, HttpResponse, StrictResponse } from "msw";
 
 const User = [{ email: "root@root", password: "1234" }];
-const Posts = [];
+let quests = [
+  {
+    id: 1,
+    name: "java",
+    content: "java는 무슨 언어인가?",
+    answer: "java는 객체지향 언어다.",
+    feedback: "정답입니다.",
+    createdDate: "2024-08-19",
+  },
+  {
+    id: 2,
+    name: "python",
+    content: "python의 주요 특징은 무엇인가?",
+    answer: "",
+    feedback: "",
+    createdDate: "2024-08-20",
+  },
+  {
+    id: 3,
+    name: "html",
+    content: "html의 주요 역할은 무엇인가?",
+    answer: "",
+    feedback: "",
+    createdDate: "2024-08-21",
+  },
+];
 
 export const handlers = [
   http.post("/api/auth/login", () => {
@@ -21,36 +46,20 @@ export const handlers = [
     });
   }),
   http.get("/api/quest", () => {
-    return HttpResponse.json([
-      {
-        id: 1,
-        name: "java",
-        content: "java는 무슨 언어인가?",
-        answer: "java는 객체지향 언어다.",
-        feedback: "정답입니다.",
-        createdDate: "2024-08-19",
-      },
-      {
-        id: 2,
-        name: "python",
-        content: "python의 주요 특징은 무엇인가?",
-        // answer: "python은 문법이 간결하고, 다양한 라이브러리를 제공한다.",
-        // feedback: "정확합니다. Python은 초보자에게 인기 있는 언어입니다.",
-        createdDate: "2024-08-20",
-      },
-      {
-        id: 3,
-        name: "html",
-        content: "html의 주요 역할은 무엇인가?",
-        // answer: "html은 웹 페이지의 구조를 정의하는 마크업 언어다.",
-        // feedback: "맞습니다. HTML은 웹 개발의 기초를 형성합니다.",
-        createdDate: "2024-08-21",
-      },
-    ]);
+    return HttpResponse.json(quests);
   }),
   http.post("/api/quest/:questId", ({ request, params }) => {
     const { questId } = params;
-    console.log("Quest Posted", request, questId);
+
+    const updatedQuest = quests.find((quest) => quest.id === Number(questId));
+
+    if (updatedQuest) {
+      updatedQuest.answer = "옳은 답변";
+      updatedQuest.feedback = "아무튼 피드백";
+    }
+
+    console.log("Quest updated", updatedQuest);
+
     return HttpResponse.json({
       contents: {
         strength: "strength",

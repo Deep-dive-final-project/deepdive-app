@@ -1,45 +1,66 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import styles from "./lectureList.module.css";
 import LectureItem from "./LectureItem";
 import axios from "axios";
 import axiosInstance from "@/lib/axios";
+import { Lecture, Section } from "@/types/lecture";
 
-interface Section {
-  title: string;
-  isWritten: boolean; // 작성 여부
-}
+const fetchLectures = async (): Promise<Lecture[]> => {
+  const {
+    data: { contents },
+  } = await axiosInstance.get("/api/lecture?memberId=1");
+  return contents;
+};
 
-interface Lecture {
-  title: string;
-  sections: Section[];
-}
+const fetchSections = async (lectureId: number): Promise<Section[]> => {
+  const {
+    data: { data },
+  } = await axiosInstance.get(`/api/lecture/${lectureId}/section?memberId=1`);
+  return data.contents;
+};
 
 export default function LectureList() {
-  const [lectures, setLectures] = useState<Lecture[]>([]);
   const [openLecture, setOpenLecture] = useState<number | null>(null);
+  const [lectureList, setLectureList] = useState<Lecture[]>([]);
 
-  // 서버에서 강의 데이터를 가져오는 함수
-  const fetchLectures = async () => {
-    try {
-      const { data: response } = await axiosInstance.get("/api/lecture");
-      console.log("res", response);
-      setLectures(response.data);
-    } catch (error) {
-      console.error("Failed to fetch lectures:", error);
-    }
-  };
+  const {
+    data: lectures = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["lectures"],
+    queryFn: fetchLectures,
+  });
 
   useEffect(() => {
-    fetchLectures(); // 컴포넌트가 마운트되면 데이터를 불러옴
-  }, []);
+    if (lectures.length > 0) {
+      setLectureList(lectures);
+    }
+  }, [lectures]);
 
-  const toggleLecture = (index: number) => {
+  const toggleLecture = async (index: number) => {
     if (openLecture === index) {
       setOpenLecture(null);
     } else {
       setOpenLecture(index);
+      if (!lectureList[index].sections) {
+        try {
+          const sections = await fetchSections(lectureList[index].id);
+          console.log("sections", sections);
+          const updatedLectures = [...lectureList];
+          updatedLectures[index] = {
+            ...updatedLectures[index],
+            sections,
+          };
+
+          setLectureList(updatedLectures);
+        } catch (error) {
+          console.error("Failed to fetch sections:", error);
+        }
+      }
     }
   };
 

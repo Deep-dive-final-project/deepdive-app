@@ -8,8 +8,12 @@ import { Quiz, QuizFeedback } from "@/types/quiz";
 import axiosInstance from "@/lib/axios";
 
 const fetchQuizzes = async (): Promise<Quiz[]> => {
-  const { data } = await axiosInstance.get("/api/quest");
-  return data;
+  const {
+    data: { data },
+  } = await axiosInstance.get("/api/quest?memberId=2");
+  const res = await axiosInstance.get("/api/quest?memberId=2");
+  console.log("data", data);
+  return data?.dtos;
 };
 
 const submitAnswer = async ({
@@ -25,9 +29,7 @@ const submitAnswer = async ({
     content,
     answer,
   });
-  console.log("post res", data);
   const { contents } = data;
-  console.log("post feedback", contents);
   return contents;
 };
 
@@ -45,7 +47,8 @@ export default function QuizContainer() {
     { quizId: number; content: string; answer: string }
   >({
     mutationFn: submitAnswer,
-    onSuccess: () => {
+    onSuccess: (feedback) => {
+      console.log("here's feedback", feedback);
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
     },
   });
@@ -69,7 +72,11 @@ export default function QuizContainer() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div style={{ height: "243px" }}>Loading...</div>;
+  }
+
+  if (!quizzes) {
+    return <div style={{ height: "243px" }}>풀 문제가 없습니다.</div>;
   }
 
   return (

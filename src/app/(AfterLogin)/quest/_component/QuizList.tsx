@@ -72,7 +72,7 @@ export default function QuizList({
               className={styles.solveButton}
               onClick={() => handleOpenModal(index)}
             >
-              보기
+              {!!quiz.answer ? "보기" : "풀기"}
             </button>
           </div>
         ))}
