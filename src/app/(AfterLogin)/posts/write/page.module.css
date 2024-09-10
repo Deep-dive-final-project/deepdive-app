@@ -41,7 +41,7 @@
   gap: 0.5rem;
 }
 
-.uploadButton {
+.uploadButton, .summaryButton {
   height: 2.5rem;
   color: white;
   background-color: #5094fa;
@@ -50,7 +50,10 @@
   border-radius: 0.5rem;
   cursor: pointer;
 }
-.uploadButton:disabled {
+.summaryButton {
+  background-color: palevioletred;
+}
+.uploadButton:disabled, .summaryButton:disabled {
   opacity: 0.32;
   cursor: default;
 }

@@ -44,31 +44,31 @@ export const plansWithTasks: Plan[] = [
     state: "대기중",
     tasks: [
       {
-        taskId: 1,
+        taskId: 6,
         title: "Next.js 프로젝트 초기 설정 및 페이지 구성",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 2,
+        taskId: 7,
         title: "데이터 패칭 구현",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 3,
+        taskId: 8,
         title: "SEO 최적화를 위한 Head 컴포넌트 설정",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 4,
+        taskId: 9,
         title: "API Routes를 이용한 서버사이드 API 구성",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 5,
+        taskId: 10,
         title: "React Query를 활용한 비동기 데이터 관리",
         state: "대기중",
         completeDate: "",
@@ -81,31 +81,31 @@ export const plansWithTasks: Plan[] = [
     state: "대기중",
     tasks: [
       {
-        taskId: 1,
+        taskId: 11,
         title: "Redux를 사용한 전역 상태 관리 설정하기",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 2,
+        taskId: 12,
         title: "Redux-saga를 활용한 비동기 액션 처리",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 3,
+        taskId: 13,
         title: "로그인 및 회원가입 상태 관리 구현",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 4,
+        taskId: 14,
         title: "Redux DevTools를 사용한 상태 디버깅",
         state: "대기중",
         completeDate: "",
       },
       {
-        taskId: 5,
+        taskId: 15,
         title: "서버와 연동한 상태 관리 및 오류 처리",
         state: "대기중",
         completeDate: "",

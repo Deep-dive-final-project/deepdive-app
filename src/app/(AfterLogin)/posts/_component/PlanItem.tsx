@@ -61,16 +61,30 @@ export default function PlanItem({
         <ul
           className={`${styles.tasks} ${isOpen ? styles.tasksOpen : ""}`}
         >
-          {plan.tasks?.map((task, taskIndex) => (
-            <li key={taskIndex} className={styles.taskItem}>
+          {plan.tasks?.map((task, taskIndex) => {
+            // api가 없어서 임시 방편으로...
+            if (task.state === 'finish') {
+              return (<li key={taskIndex} className={styles.taskItem}>
+                <div className={`${styles.task}`}>
+                  {task.title}
+                  <Link href={`/posts/${task.taskId-1}`} className={styles.readButton}>
+                    읽기
+                  </Link>
+                </div>
+              </li>)
+            }
+          
+            return (<li key={taskIndex} className={styles.taskItem}>
               <div className={`${styles.task}`}>
                 {task.title}
-                <Link href="/posts/write" className={styles.writeButton}>
+                <Link href={`/posts/write?taskId=${task.taskId}&taskTitle=${task.title}`} 
+                className={styles.writeButton}>
                   쓰기
                 </Link>
               </div>
-            </li>
-          ))}
+            </li>)
+        
+          })}
         </ul>
       )}
     </div>

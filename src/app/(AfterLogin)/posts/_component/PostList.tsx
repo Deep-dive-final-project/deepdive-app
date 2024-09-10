@@ -12,7 +12,7 @@ export default async function PostList() {
 
   const fetchPosts = async () => {
     const { data: { contents } } = await fetchWithAuth("/api/note");
-
+    
     return contents
   }
   const { data: posts , error, isLoading } = useQuery<Post[], Error>({
