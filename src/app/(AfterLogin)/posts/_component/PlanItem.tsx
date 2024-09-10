@@ -77,7 +77,8 @@ export default function PlanItem({
             return (<li key={taskIndex} className={styles.taskItem}>
               <div className={`${styles.task}`}>
                 {task.title}
-                <Link href="/posts/write" className={styles.writeButton}>
+                <Link href={`/posts/write?taskId=${task.taskId}&taskTitle=${task.title}`} 
+                className={styles.writeButton}>
                   쓰기
                 </Link>
               </div>
