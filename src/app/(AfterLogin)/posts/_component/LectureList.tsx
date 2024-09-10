@@ -24,7 +24,7 @@ const fetchSections = async (lectureId: number): Promise<Section[]> => {
 
 export default function LectureList() {
   const [openLecture, setOpenLecture] = useState<number | null>(null);
-  const [lectureList, setLectureList] = useState<Lecture[]>([]);
+  const [lectureList, setLectureList] = useState<Lecture[]>(dummyLectures);
 
   const {
     data: lectures = [],
@@ -35,38 +35,38 @@ export default function LectureList() {
     queryFn: fetchLectures,
   });
 
-  useEffect(() => {
-    if (lectures.length > 0) {
-      setLectureList(lectures);
-    }
-  }, [lectures]);
+  // useEffect(() => {
+  //   if (lectures.length > 0) {
+  //     setLectureList(lectures);
+  //   }
+  // }, [lectures]);
 
   const toggleLecture = async (index: number) => {
     if (openLecture === index) {
       setOpenLecture(null);
     } else {
       setOpenLecture(index);
-      if (!lectureList[index].sections) {
-        try {
-          const sections = await fetchSections(lectureList[index].id);
-          console.log("sections", sections);
-          const updatedLectures = [...lectureList];
-          updatedLectures[index] = {
-            ...updatedLectures[index],
-            sections,
-          };
+      // if (!lectureList[index].sections) {
+      //   try {
+      //     const sections = await fetchSections(lectureList[index].id);
+      //     console.log("sections", sections);
+      //     const updatedLectures = [...lectureList];
+      //     updatedLectures[index] = {
+      //       ...updatedLectures[index],
+      //       sections,
+      //     };
 
-          setLectureList(updatedLectures);
-        } catch (error) {
-          console.error("Failed to fetch sections:", error);
-        }
-      }
+      //     setLectureList(updatedLectures);
+      //   } catch (error) {
+      //     console.error("Failed to fetch sections:", error);
+      //   }
+      // }
     }
   };
 
   return (
     <div className={styles.container}>
-      {lectures.map((lecture, index) => (
+      {lectureList.map((lecture, index) => (
         <LectureItem
           key={index}
           lecture={lecture}
@@ -77,3 +77,24 @@ export default function LectureList() {
     </div>
   );
 }
+
+const dummySections1: Section[] = [
+  { sectionName: "리액트의 개념과 기초" },
+  { sectionName: "리액트 응용" },
+];
+const dummySections2: Section[] = [
+  { sectionName: "Next.js의 개념과 기초" },
+  { sectionName: "Next.js 응용" },
+];
+const dummyLectures: Lecture[] = [
+  {
+    id: 1,
+    title: "리액트 기본 강의",
+    sections: dummySections1,
+  },
+  {
+    id: 2,
+    title: "Next.js 강의",
+    sections: dummySections2,
+  },
+];

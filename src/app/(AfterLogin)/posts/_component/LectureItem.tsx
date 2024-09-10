@@ -58,18 +58,16 @@ export default function LectureItem({
       </div>
 
       {isOpen && (
-        <ul className={styles.sections}>
-          {lecture?.sections?.map((section, sectionIndex) => (
+        <ul
+          className={`${styles.sections} ${isOpen ? styles.sectionsOpen : ""}`}
+        >
+          {lecture.sections?.map((section, sectionIndex) => (
             <li key={sectionIndex} className={styles.sectionItem}>
-              <div className={`${styles.section} ${styles.noSelect}`}>
-                {section.title}
-                {section.isWritten ? (
-                  <button className={styles.readButton}>읽기</button>
-                ) : (
-                  <Link href="/posts/write" className={styles.writeButton}>
-                    쓰기
-                  </Link>
-                )}
+              <div className={`${styles.section}`}>
+                {section.sectionName}
+                <Link href="/posts/write" className={styles.writeButton}>
+                  쓰기
+                </Link>
               </div>
             </li>
           ))}

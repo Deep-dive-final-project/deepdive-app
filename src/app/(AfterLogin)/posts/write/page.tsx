@@ -9,12 +9,17 @@ import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
 export default function PostsWrite() {
   const router = useRouter();
 
+  const [title, setTitle] = useState<string>("");
   const [post, setPost] = useState<string>("");
-  const [isView, setIsView] = useState(false);
+  const [isView, setIsView] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSummaryPost = async () => {
-    // 꼭...고치리라...
-    setIsView(true);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsView(true);
+    }, 1000);
   };
   const handleSubmitPost = async () => {
     router.push("/posts");
@@ -45,14 +50,14 @@ export default function PostsWrite() {
         <div className={styles.buttons}>
           <button
             className={styles.uploadButton}
-            disabled={!post.trim()}
+            disabled={!post.trim() || isLoading}
             onClick={handleSummaryPost}
           >
             AI 요약
           </button>
           <button
             className={styles.uploadButton}
-            disabled={!post.trim()}
+            disabled={!post.trim() || isLoading}
             onClick={handleSubmitPost}
           >
             업로드
@@ -60,15 +65,22 @@ export default function PostsWrite() {
         </div>
       </div>
       <div className={styles.content}>
-        <div>제목을 입력하세요</div>
-        <div>강좌 + 섹션</div>
+        <input
+          type="text"
+          name="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="제목을 입력하세요."
+        />
+        <div>Next.js로 프로젝트 만들기!</div>
         <textarea
-          name=""
+          name="note"
           id=""
           className={styles.textArea}
           onChange={(e) => setPost(e.target.value)}
           placeholder="강의를 듣고 배운 내용을 적어보세요."
         ></textarea>
+        {isLoading && <div>Loading...</div>}
         {isView && <MarkdownToHTML content={sampleMrkdwn} />}
       </div>
     </div>

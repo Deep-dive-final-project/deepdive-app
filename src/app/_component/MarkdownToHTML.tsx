@@ -13,10 +13,10 @@ const sampleMrkdwn = `
 
 `;
 
-export default function MarkdownToHTML(contents: string) {
+export default function MarkdownToHTML({ content }: { content: string }) {
   return (
-    <div>
-      <ReactMarkdown>{contents}</ReactMarkdown>
+    <div style={{ color: "black" }}>
+      <ReactMarkdown>{content}</ReactMarkdown>
     </div>
   );
 }

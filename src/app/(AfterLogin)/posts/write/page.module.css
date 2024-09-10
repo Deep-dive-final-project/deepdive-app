@@ -1,6 +1,6 @@
 .wrapper {
   height: 100%;
-  margin: 0 auto;
+  margin: 1rem auto;
   padding: 1rem 2rem;
 }
 
@@ -62,7 +62,9 @@
   overflow: hidden;
 }
 .content div,
+.content input,
 .content textarea {
+  font-size: 16px;
   padding: 0.5rem 1rem;
   line-height: 1.5rem;
   border-radius: 0.5rem;
@@ -78,9 +80,13 @@
   color: black;
   resize: none;
   outline: none;
-  padding: 1rem;
+  padding: 1.5rem 1rem;
   height: 100%;
 }
+.content input {
+  outline: none;
+}
+.content input:focus,
 .textArea:focus {
   border: 1px solid rgb(80, 148, 250);
 }
