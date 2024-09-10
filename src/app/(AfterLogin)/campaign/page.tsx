@@ -1,18 +1,5 @@
 "use client";
 
-//TODO
-/*
-
-이미 있는 학습계획 데이터는 /api/plan으로 불러오고
-사용자가 있는 학습 계획을 누르면 /api/plan/{planId}로 내용 얻어오고(아래로 토글)
-동시에 /api/plan/{planId}에서 태스크 내용도 같이 가져와서 출력
-
-새로 만들기는 강의 불러오기 /api/lecture하고
-강의 선택하면 /api/lecture/{lecture_id}/section 불러와지게 하고
-/api/plan으로 데이터 생성
-그리고 다시 /api/plan으로 리로딩
-*/
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/app/context/AuthProvider";
 import { useRouter } from "next/navigation";
@@ -20,8 +7,8 @@ import styles from "./campaign.module.css";
 
 // Task의 타입 정의
 interface Task {
-  section_name: string; // 섹션 이름을 저장하는 필드
-  status: string; // '시작전', '진행중', '완료' 상태를 가짐
+  section_name: string;
+  status: string;
 }
 
 // Plan의 타입 정의
@@ -31,10 +18,9 @@ interface Plan {
   course?: string;
   goal?: string;
   tasks: Task[];
-  state: "pending" | "on_going" | "finish"; // 상태를 문자열 리터럴 타입으로 지정
+  state: "pending" | "on_going" | "finish";
 }
 
-// PlanDetail의 타입 정의 (API 응답에 사용)
 interface PlanDetail {
   plan_id: number;
   plan_name: string;
@@ -61,7 +47,7 @@ interface Section {
 export default function Campaign() {
   const [showCreatePanel, setShowCreatePanel] = useState(false);
   const [planName, setPlanName] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState<number | "">(""); // lecture_id를 저장하는 상태로 변경
+  const [selectedCourse, setSelectedCourse] = useState<number | "">("");
   const [goal, setGoal] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -70,8 +56,7 @@ export default function Campaign() {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [sections, setSections] = useState<Section[]>([]); // 섹션 데이터를 관리할 상태 추가
-
+  const [sections, setSections] = useState<Section[]>([]);
   const [collapsedSections, setCollapsedSections] = useState<{
     [key: string]: boolean;
   }>({
@@ -103,10 +88,26 @@ export default function Campaign() {
             id: plan.planId,
             plan_name: plan.planTitle,
             start_date: new Date(plan.startDate).toISOString().split("T")[0],
-            state: "pending", // 기본 상태값 설정
+            state: "pending",
           }));
 
-          setPlans(fetchedPlans);
+          // 각 학습 계획의 세부 정보 가져오기
+          const plansWithDetails = await Promise.all(
+            fetchedPlans.map(async (plan: Plan) => {
+              const detailResponse = await fetchWithAuth(`/api/plan/${plan.id}`);
+              console.log("Detail Response:", detailResponse);
+              if (detailResponse.success && detailResponse.data) {
+                return {
+                  ...plan,
+                  state: detailResponse.data.state,
+                  tasks: detailResponse.data.tasks || [],
+                };
+              }
+              return plan;
+            })
+          );
+
+          setPlans(plansWithDetails);
         } else {
           console.error("Failed to fetch learning plans:", planResponse);
         }
@@ -117,10 +118,7 @@ export default function Campaign() {
         if (lectureResponse) {
           setLectures(lectureResponse.contents);
         } else {
-          console.error(
-            "Failed to fetch lecture:",
-            lectureResponse.message || "Unknown error"
-          );
+          console.error("Failed to fetch lecture:", lectureResponse.message || "Unknown error");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -141,16 +139,19 @@ export default function Campaign() {
   };
 
   const handlePlanClick = async (planId: number) => {
+    // 선택된 계획 ID와 현재 클릭된 계획 ID가 같은 경우, 선택 해제
     if (selectedPlanId === planId) {
-      setSelectedPlanId(null); // 이미 열려 있는 경우 닫기
+      setSelectedPlanId(null); 
+      setTasks([]); // 태스크 목록 초기화
       return;
     }
-
+  
     try {
       const response = await fetchWithAuth(`/api/plan/${planId}`);
+      console.log("/api/plan/${planId}", response);
       if (response.success) {
         const plan = response.data;
-        setSelectedPlanId(planId);
+        setSelectedPlanId(planId); // 선택된 계획 ID 설정
         setTasks(plan.tasks); // 태스크 내용 설정
       }
     } catch (error) {
@@ -202,21 +203,19 @@ export default function Campaign() {
 
     if (!isValid) return;
 
-    // 새로운 학습 계획 생성 로직
     fetchWithAuth("/api/plan", {
       method: "POST",
       data: {
-        title: planName, // 제목을 설정
-        start_date: startDate, // 시작 날짜
-        end_date: endDate, // 종료 날짜
-        description: description, // 학습 계획 설명
-        lecture_id: selectedCourse, // 선택된 강의 ID
+        title: planName,
+        start_date: startDate,
+        end_date: endDate,
+        description: description,
+        lecture_id: selectedCourse,
       },
     })
       .then((response) => {
         console.log("Response from /api/plan:", response);
-        if (response && response.isSuccess) {
-          // 응답이 성공적일 경우 /campaign/complete로 이동
+        if (response.success) {
           router.push("/campaign/complete");
         } else {
           console.error("Failed to create learning plan:", response.message || "Unknown error");
@@ -225,27 +224,25 @@ export default function Campaign() {
       .catch((error) => {
         console.error("새 학습 계획 생성 중 오류 발생:", error);
       });
-  
+
     handleClosePanel();
   };
 
   const handleCourseChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCourseId = Number(event.target.value);
-    setSelectedCourse(selectedCourseId); // lecture_id를 저장
+    setSelectedCourse(selectedCourseId);
 
-    // 강의가 선택되었을 때, 해당 강의의 섹션을 가져오는 API 호출
     if (selectedCourseId) {
       try {
         const response = await fetchWithAuth(`/api/lecture/${selectedCourseId}/section`);
         console.log("Task:", response);
         if (response && response.success) {
-          // 올바른 응답 형식에 따라 섹션 데이터를 가져옴
           const fetchedSections = response.data.contents.map((section: any) => ({
             section_name: section.subSectionName,
-            status: "시작전", // 각 섹션을 태스크로 변환하고, 상태를 기본값으로 설정
+            status: "시작전",
           }));
-  
-          setTasks(fetchedSections); // 태스크 목록 업데이트
+
+          setTasks(fetchedSections);
         } else {
           console.error("섹션을 가져오는 중 오류 발생:", response.message || "Unknown error");
         }
@@ -253,7 +250,7 @@ export default function Campaign() {
         console.error("섹션을 가져오는 중 오류 발생:", error);
       }
     } else {
-      setTasks([]); // 선택된 강의가 없으면 태스크 목록을 초기화
+      setTasks([]);
     }
   };
 
@@ -288,7 +285,7 @@ export default function Campaign() {
               {!collapsedSections[status] && (
                 <div className={styles.planList}>
                   {plans.map((plan) => (
-                    <div key={plan.id} className={styles.planItem}>
+                    <div key={plan.id} className={`${styles.planItem} ${selectedPlanId === plan.id ? 'active' : ''}`}>
                       <div
                         className={styles.planTitle}
                         onClick={() => handlePlanClick(plan.id)}
@@ -352,7 +349,7 @@ export default function Campaign() {
                 <option value="">강의 선택</option>
                 {lectures.map((lecture) => (
                   <option key={lecture.id} value={lecture.id}>
-                    {lecture.title} {/* title 값을 표시 */}
+                    {lecture.title}
                   </option>
                 ))}
               </select>
