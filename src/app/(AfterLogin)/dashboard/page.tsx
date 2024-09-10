@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/app/context/AuthProvider";
 import styles from "./dashboard.module.css"; // CSS 모듈 임포트
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   activityStatuses,
@@ -47,6 +48,7 @@ export default function Dashboard() {
   const [currentSlide, setCurrentSlide] = useState(0); // 슬라이더 상태 관리
 
   const { accessToken, fetchWithAuth } = useAuth();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +59,11 @@ export default function Dashboard() {
         console.log("Plan Response:", planResponse);
 
         if (planResponse) {
+<<<<<<< HEAD
+          const fetchedPlans = planResponse.map(
+=======
           const fetchedPlans = planResponse.getPlanForMainPageResponseDtos.map(
+>>>>>>> 02335ac1ab240c3780459613cbb82adb62ba3a9a
             (plan: any) => ({
               plan_id: plan.planId,
               plan_name: plan.planTitle,
@@ -70,9 +76,15 @@ export default function Dashboard() {
           const plansWithDetails = await Promise.all(
             fetchedPlans.map(async (plan: LearningPlan) => {
               const detailResponse = await fetchWithAuth(`/api/plan/${plan.plan_id}`);
+<<<<<<< HEAD
+              console.log("detailResponse:", detailResponse);
+              if (detailResponse.success && detailResponse.data) {
+                return { ...plan, state: detailResponse.data.state };
+=======
               if (!detailResponse) {
                 console.log("없어요")
                 return plan;
+>>>>>>> 02335ac1ab240c3780459613cbb82adb62ba3a9a
               }
               console.log("여기까지 안넘어올듯")
               console.log(detailResponse)
@@ -88,6 +100,16 @@ export default function Dashboard() {
           console.error("Failed to fetch learning plans:", planResponse);
         }
 
+        // 최신 강의 노트 데이터 가져오기
+        const noteResponse = await fetchWithAuth("/api/note/latest");
+        console.log("noteResponse:", noteResponse);
+        if (noteResponse && noteResponse.success && Array.isArray(noteResponse.data)) {
+          setNotes(noteResponse.data); // 데이터가 noteResponse.data에 바로 있으므로 이렇게 설정합니다.
+        } else {
+          console.error("Failed to fetch latest notes:", noteResponse);
+          setNotes([]); // 오류 발생 시 빈 배열로 초기화
+        }
+
         // 추천 강의 데이터 가져오기
         const lectureResponse = await fetchWithAuth("/api/lecture/recommend");
         if (lectureResponse.data.success) {
@@ -99,15 +121,6 @@ export default function Dashboard() {
           );
         }
 
-        // 최신 강의 노트 데이터 가져오기
-        const noteResponse = await fetchWithAuth("/api/note/latest");
-        console.log("noteResponse:", noteResponse);
-        if (noteResponse.success && noteResponse.data && noteResponse.data.contents) {
-          
-          setNotes(noteResponse.data.contents); // 노트 데이터를 상태에 설정
-        } else {
-          console.error("Failed to fetch latest notes:", noteResponse);
-        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -231,15 +244,15 @@ export default function Dashboard() {
           <div className={`${styles.card} ${styles.notesCard}`}>
             <div className={styles.cardTitle}>
               나의 노트{" "}
-              <span className={styles.totalNotes}>{plans.length}</span>
+              <span className={styles.totalNotes}>{notes.length}</span>
             </div>
             {/* 노트 목록 */}
             <ul className={styles.noteList}>
-              {notes.length > 0 ? (
+              {Array.isArray(notes) && notes.length > 0 ? (
                 notes.map((note) => (
                   <li key={note.note_id}>
                     <div className={styles.noteItem}>
-                      {note.title} - 완료 날짜: {note.complete_date}
+                      {note.title}
                     </div>
                   </li>
                 ))
