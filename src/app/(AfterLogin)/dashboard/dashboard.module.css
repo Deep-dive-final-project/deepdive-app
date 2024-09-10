@@ -68,7 +68,8 @@
 
   /* 진행 중인 학습 계획 */
   .learningPlanCard {
-    max-height: 200px; 
+    overflow-y: auto;
+    max-height: 300px; 
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -78,29 +79,36 @@
     overflow-y: auto;
     padding-right: 10px; 
     margin-right: -10px; 
+    list-style: none;
+    padding: 0;
   }
 
   .planItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    display: flex; /* Flexbox 레이아웃 적용 */
+    justify-content: space-between; /* 왼쪽과 오른쪽 끝으로 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
     padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
     position: relative;
+    gap: 10px; /* 아이템 간의 간격 추가 */
   }
 
-  .planStartDate{
-    font-style: normal;
-    font-size: 10px;
-    position: absolute;
-    left: 10px;
-    bottom: 5px;
+  .planItem:hover {
+    background-color: #f0f0f0; /* 호버 시 배경색 변화 */
+  }
+
+  .planName {
+    font-weight: 600; /* 굵은 글씨 */
+    color: #333;
+    margin-bottom: 5px; /* 아래쪽 여백 추가 */
+    flex: 1;
   }
 
   .statusSelect {
+    margin-left: auto; /* 오른쪽 끝으로 정렬 */
     padding: 5px 10px;
     border-radius: 4px;
     border: none;
@@ -115,19 +123,19 @@
     text-align: center;
   }
 
-  .시작전 {
+  .pending {
     background-color: #ccc;
     color: #333;
     border: none;
   }
   
-  .진행중 {
+  .on_going {
     background-color: #c3e9f6;
     color: rgb(21, 106, 192);
     border: none;
   }
   
-  .완료 {
+  .finish {
     background-color: #d2f1d2;
     color: #195c19;
     border: none;

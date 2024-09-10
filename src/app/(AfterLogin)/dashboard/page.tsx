@@ -1,7 +1,6 @@
 "use client"; // 클라이언트 컴포넌트로 설정
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useAuth } from "@/app/context/AuthProvider";
 import styles from "./dashboard.module.css"; // CSS 모듈 임포트
 
@@ -17,7 +16,7 @@ interface LearningPlan {
   plan_id: number;
   plan_name: string;
   start_date: string;
-  status?: string; // status 속성 추가 (선택적)
+  state?: "pending" | "on_going" | "finish"; // 추가된 상태 필드
 }
 
 // 추천 강의의 타입 정의
@@ -29,9 +28,17 @@ interface RecommendedLecture {
   image_url: string;
 }
 
+// 강의 노트의 타입 정의
+interface Note {
+  note_id: number;
+  title: string;
+  complete_date: string;
+}
+
 export default function Dashboard() {
   const [plans, setPlans] = useState<LearningPlan[]>([]); // 학습 계획 상태 관리
   const [recommendedLectures, setRecommendedLectures] = useState<RecommendedLecture[]>([]); // 추천 강의 상태 관리
+  const [notes, setNotes] = useState<Note[]>([]); // 노트 상태 관리
   const [quizProgress, setQuizProgress] = useState<boolean[]>([
     false,
     false,
@@ -39,17 +46,39 @@ export default function Dashboard() {
   ]); // 퀴즈 진행 상태 관리
   const [currentSlide, setCurrentSlide] = useState(0); // 슬라이더 상태 관리
 
-  const { accessToken, fetchWithAuth, refreshAccessToken } = useAuth();
+  const { accessToken, fetchWithAuth } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // 학습 계획 가져오기
         const planResponse = await fetchWithAuth("/api/plan/overview");
-        if (planResponse.data.success) {
-          setPlans(planResponse.data.data.contents); // 학습 계획 데이터를 상태에 설정
+        console.log("Plan Response:", planResponse);
+
+        if (planResponse && planResponse.getPlanForMainPageResponseDtos) {
+          const fetchedPlans = planResponse.getPlanForMainPageResponseDtos.map(
+            (plan: any) => ({
+              plan_id: plan.planId,
+              plan_name: plan.planTitle,
+              start_date: new Date(plan.startDate).toISOString().split("T")[0], // 날짜 형식을 ISO 형식으로 변환
+              state: "pending", // 기본 상태값 설정
+            })
+          );
+
+          // 각 학습 계획의 세부 정보 가져오기
+          const plansWithDetails = await Promise.all(
+            fetchedPlans.map(async (plan: LearningPlan) => {
+              const detailResponse = await fetchWithAuth(`/api/plan/${plan.plan_id}`);
+              if (detailResponse.success && detailResponse.data) {
+                return { ...plan, state: detailResponse.data.state };
+              }
+              return plan;
+            })
+          );
+
+          setPlans(plansWithDetails);
         } else {
-          console.error("Failed to fetch learning plans:", planResponse.data.message);
+          console.error("Failed to fetch learning plans:", planResponse);
         }
 
         // 추천 강의 데이터 가져오기
@@ -57,7 +86,18 @@ export default function Dashboard() {
         if (lectureResponse.data.success) {
           setRecommendedLectures(lectureResponse.data.data.contents); // 추천 강의 데이터를 상태에 설정
         } else {
-          console.error("Failed to fetch recommended lectures:", lectureResponse.data.message);
+          console.error(
+            "Failed to fetch recommended lectures:",
+            lectureResponse.data.message
+          );
+        }
+
+        // 최신 강의 노트 데이터 가져오기
+        const noteResponse = await fetchWithAuth("/api/note/latest");
+        if (noteResponse.success && noteResponse.data && noteResponse.data.contents) {
+          setNotes(noteResponse.data.contents); // 노트 데이터를 상태에 설정
+        } else {
+          console.error("Failed to fetch latest notes:", noteResponse);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -65,27 +105,15 @@ export default function Dashboard() {
     };
 
     fetchData();
-  }, [accessToken, fetchWithAuth, refreshAccessToken]);
+  }, [accessToken]);
 
   // 상태 변경 핸들러
-  const handleStatusChange = (
-    index: number,
-    newStatus: string
-  ) => {
-    setPlans((prevPlans) => {
-      const newPlans = [...prevPlans];
-      newPlans[index].status = newStatus; // 새로운 상태로 업데이트
-      return newPlans;
-    });
-  };
-
-  // 퀴즈 풀기 핸들러
-  const handleQuizSolve = (index: number) => {
-    setQuizProgress((prevProgress) => {
-      const newProgress = [...prevProgress];
-      newProgress[index] = true; // 해당 퀴즈를 푼 것으로 표시
-      return newProgress;
-    });
+  const handleStatusChange = (plan_id: number, newState: "pending" | "on_going" | "finish") => {
+    setPlans((prevPlans) =>
+      prevPlans.map((plan) =>
+        plan.plan_id === plan_id ? { ...plan, state: newState } : plan
+      )
+    );
   };
 
   // 퀴즈 진행도 퍼센트 계산
@@ -95,7 +123,6 @@ export default function Dashboard() {
   // 슬라이더 핸들러
   const handleNextSlide = () => {
     if (currentSlide < recommendedLectures.length - 3) {
-      // 한 번에 3개의 슬라이드가 보임
       setCurrentSlide(currentSlide + 1);
     }
   };
@@ -122,24 +149,24 @@ export default function Dashboard() {
             <div className={styles.cardTitle}>진행 중인 학습 계획</div>
             {/* 학습 계획 내용 */}
             <ul className={styles.planItemList}>
-              {plans.map((plan, index) => (
-                <li key={index} className={styles.planItem}>
-                  <div>
-                    {plan.plan_name} <i className={styles.planStartDate}>{plan.start_date}</i>
-                  </div>
-                  <select
-                    className={`${styles.statusSelect} ${styles[plan.status || '']}`} // 상태에 따른 스타일
-                    value={plan.status || '시작전'}
-                    onChange={(e) =>
-                      handleStatusChange(index, e.target.value)
-                    }
-                  >
-                    <option value="시작전">시작전</option>
-                    <option value="진행중">진행중</option>
-                    <option value="완료">완료</option>
-                  </select>
-                </li>
-              ))}
+              {plans && plans.length > 0 ? (
+                plans.map((plan) => (
+                  <li key={plan.plan_id} className={styles.planItem}>
+                    <div className={styles.planName}>{plan.plan_name}</div>
+                    <select
+                      className={`${styles.statusSelect} ${styles[plan.state || 'pending']}`}
+                      value={plan.state || "pending"}
+                      onChange={(e) => handleStatusChange(plan.plan_id, e.target.value as "pending" | "on_going" | "finish")}
+                    >
+                      <option value="pending">시작전</option>
+                      <option value="on_going">진행중</option>
+                      <option value="finish">완료</option>
+                    </select>
+                  </li>
+                ))
+              ) : (
+                <li>데이터를 불러오는 중...</li>
+              )}
             </ul>
           </div>
 
@@ -199,16 +226,17 @@ export default function Dashboard() {
             </div>
             {/* 노트 목록 */}
             <ul className={styles.noteList}>
-              {plans.map((plan, index) => (
-                <li key={index}>
-                  <div className={styles.noteItem}>
-                    {plan.plan_name} - {plan.start_date}
-                  </div>
-                  <div className={styles.noteMeta}>
-                    <span>2일 전</span> {/* 날짜 예시 */}
-                  </div>
-                </li>
-              ))}
+              {notes.length > 0 ? (
+                notes.map((note) => (
+                  <li key={note.note_id}>
+                    <div className={styles.noteItem}>
+                      {note.title} - 완료 날짜: {note.complete_date}
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li>노트를 불러오는 중...</li>
+              )}
             </ul>
           </div>
 
