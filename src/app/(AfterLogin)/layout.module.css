@@ -50,16 +50,17 @@
   position: fixed;
   left: -20rem;
   top: 3rem; /* 기본 상태에서 살짝 내려옴 */
-  height: 100%;
+  height: calc(100% - 3rem);
   width: 20rem;
   background-color: #f9f9f9;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: left 0.3s ease-in-out, top 0.3s ease-in-out;
+  transition: left 0.3s ease-in-out, top 0.3s ease-in-out, height 0.3s ease-in-out;
 }
 
 .sidebarOpen {
   left: 0;
   top: 0;
+  height: 100%;
 }
 
 .sidebarHover {
@@ -116,7 +117,7 @@
 }
 
 .contentShift {
-  margin-left: 20rem; /* 사이드바가 열렸을 때 컨텐츠가 이동할 거리 */
+  margin-left: 20rem;
 }
 .sectionBar {
   height: 100%;

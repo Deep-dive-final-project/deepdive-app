@@ -129,7 +129,7 @@ export default function PostPage({ params }: PostPageProps) {
       </div>
       <div className={styles.card}>
         <div>
-          <div className={styles.cardTitle}>강의 제목</div>
+          <div className={styles.cardTitle}>{post.title}</div>
           <div className={styles.cardDetail}>3시간 전</div>
         </div>
         <div className={styles.summary}>

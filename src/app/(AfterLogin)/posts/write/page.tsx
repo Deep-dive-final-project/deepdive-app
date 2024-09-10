@@ -72,7 +72,7 @@ export default function PostsWrite() {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="제목을 입력하세요."
         />
-        <div>Next.js로 프로젝트 만들기!</div>
+        <div>리액트 기본 강의 - 리액트의 개념과 기초</div>
         <textarea
           name="note"
           id=""

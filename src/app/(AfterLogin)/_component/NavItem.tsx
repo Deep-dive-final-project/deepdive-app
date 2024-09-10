@@ -8,8 +8,7 @@ interface NavItemProps {
 }
 
 export default function NavItem({ pathname, href, children }: NavItemProps) {
-  // 현재 경로와 href가 일치하면 active 클래스를 추가
-  const isActive = pathname === href;
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link
