@@ -72,7 +72,7 @@ export default function useAuth() {
       return;
     }
 
-    const response = await axiosInstance.post("/api/auth/refresh-token", {
+    const response = await axiosInstance.post("/api/auth/access-reissue", {
       refresh_token: refreshToken,
     });
 
