@@ -76,11 +76,7 @@ export default function Dashboard() {
               if (detailResponse.success && detailResponse.data) {
                 return { ...plan, state: detailResponse.data.state };
               }
-              console.log("여기까지 안넘어올듯")
               console.log(detailResponse)
-              if (detailResponse.success && detailResponse.data) {
-                return { ...plan, state: detailResponse.data.state };
-              }
               return plan;
             })
           );
