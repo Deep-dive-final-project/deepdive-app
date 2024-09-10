@@ -3,12 +3,21 @@
 import Link from "next/link";
 import styles from "./page.module.css";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
 
 export default function PostsWrite() {
-  const [post, setPost] = useState<string>("");
+  const router = useRouter();
 
+  const [post, setPost] = useState<string>("");
+  const [isView, setIsView] = useState(false);
+
+  const handleSummaryPost = async () => {
+    // 꼭...고치리라...
+    setIsView(true);
+  };
   const handleSubmitPost = async () => {
-    // 여기서 Post를 공개할지 비공개할지 정하고 업로드
+    router.push("/posts");
   };
 
   return (
@@ -34,10 +43,18 @@ export default function PostsWrite() {
           <h3 className={styles.headerTitle}>강의노트 작성</h3>
         </div>
         <div className={styles.buttons}>
-          <button className={styles.uploadButton} disabled={!post.trim()}>
+          <button
+            className={styles.uploadButton}
+            disabled={!post.trim()}
+            onClick={handleSummaryPost}
+          >
             AI 요약
           </button>
-          <button className={styles.uploadButton} disabled={!post.trim()}>
+          <button
+            className={styles.uploadButton}
+            disabled={!post.trim()}
+            onClick={handleSubmitPost}
+          >
             업로드
           </button>
         </div>
@@ -51,9 +68,23 @@ export default function PostsWrite() {
           className={styles.textArea}
           onChange={(e) => setPost(e.target.value)}
           placeholder="강의를 듣고 배운 내용을 적어보세요."
-          onClick={handleSubmitPost}
         ></textarea>
+        {isView && <MarkdownToHTML content={sampleMrkdwn} />}
       </div>
     </div>
   );
 }
+
+const sampleMrkdwn = `# 리액트 훅스 요약
+
+- **리액트 훅스**는 함수형 컴포넌트에서 상태 관리와 생명주기를 다루기 위한 도구이다.
+- \`useState\`: 상태 추가 및 업데이트.
+- \`useEffect\`: 부수적인 작업 처리 (API 호출, DOM 업데이트 등).
+- 클래스형 컴포넌트 없이 상태 관리를 할 수 있어 코드가 간결해진다.
+- 복잡한 라이프사이클 메서드를 대체하여 가독성을 높임.
+
+**배운 점:**
+- \`useState\`, \`useEffect\`의 사용법을 익힘.
+- 훅스를 통해 더 직관적인 코드를 작성할 수 있음.
+
+`;
