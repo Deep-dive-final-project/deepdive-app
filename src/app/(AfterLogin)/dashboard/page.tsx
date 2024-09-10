@@ -56,7 +56,7 @@ export default function Dashboard() {
         const planResponse = await fetchWithAuth("/api/plan/overview");
         console.log("Plan Response:", planResponse);
 
-        if (planResponse && planResponse.getPlanForMainPageResponseDtos) {
+        if (planResponse) {
           const fetchedPlans = planResponse.getPlanForMainPageResponseDtos.map(
             (plan: any) => ({
               plan_id: plan.planId,
@@ -70,10 +70,16 @@ export default function Dashboard() {
           const plansWithDetails = await Promise.all(
             fetchedPlans.map(async (plan: LearningPlan) => {
               const detailResponse = await fetchWithAuth(`/api/plan/${plan.plan_id}`);
-              if (detailResponse.success && detailResponse.data) {
-                return { ...plan, state: detailResponse.data.state };
+              if (!detailResponse) {
+                console.log("없어요")
+                return plan;
               }
-              return plan;
+              console.log("여기까지 안넘어올듯")
+              console.log(detailResponse)
+              // if (detailResponse.success && detailResponse.data) {
+              //   return { ...plan, state: detailResponse.data.state };
+              // }
+              // return plan;
             })
           );
 

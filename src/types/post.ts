@@ -1,5 +1,5 @@
 export interface Post {
-  noteId: string;
+  noteId: number;
   title: string;
 }
 

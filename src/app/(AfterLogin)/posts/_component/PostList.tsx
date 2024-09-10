@@ -27,9 +27,12 @@ export default async function PostList() {
   return (
     <Suspense fallback={<div>Loading posts...</div>}>
     <div className={styles.postList}>
+      <h3 style={{paddingLeft: "0.5rem"}}>전체 강의 노트</h3>
+      <ul className={styles.postItemList}>
       {posts && posts.map((post: Post, index) => (
         <PostItem key={index} post={post} />
       ))}
+      </ul>
     </div>
     </Suspense>
   );
