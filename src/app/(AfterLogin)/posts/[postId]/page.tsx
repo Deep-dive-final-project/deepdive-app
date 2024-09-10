@@ -72,7 +72,7 @@ export default async function Profile({ params }: Props) {
           <div className={styles.cardDetail}>3시간 전</div>
         </div>
         <div className={styles.summary}>
-          <MarkdownToHTML />
+          {/* <MarkdownToHTML /> */}
         </div>
         <div className={styles.rawText}>
           <h5>원본 글</h5>

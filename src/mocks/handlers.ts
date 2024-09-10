@@ -1,5 +1,5 @@
 import { http, HttpResponse, StrictResponse } from "msw";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SECRET_KEY = "your-secret-key";
 const REFRESH_SECRET_KEY = "your-refresh-secret-key";
@@ -86,7 +86,7 @@ export const handlers = [
       const { refresh_token } = await request.json();
 
       try {
-        const decoded = jwt.verify(refresh_token, REFRESH_SECRET_KEY);
+        const decoded = jwt.verify(refresh_token, REFRESH_SECRET_KEY) as JwtPayload;
 
         const newAccessToken = jwt.sign({ email: decoded.email }, SECRET_KEY, {
           expiresIn: ACCESS_TOKEN_EXPIRES_IN,

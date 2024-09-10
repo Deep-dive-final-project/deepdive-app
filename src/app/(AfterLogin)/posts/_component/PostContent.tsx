@@ -9,7 +9,7 @@ export default function PostContent({ postId }: PostContentProps) {
     <div>
       <h3>글 id {postId}</h3>
       <p>요약</p>
-      <MarkdownToHTML />
+      {/* <MarkdownToHTML /> */}
     </div>
   );
 }

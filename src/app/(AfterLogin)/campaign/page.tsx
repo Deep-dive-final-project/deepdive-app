@@ -1,5 +1,21 @@
 "use client";
 
+//TODO
+/*
+
+이미 있는 학습계획 데이터는 /api/plan으로 불러오고
+사용자가 있는 학습 계획을 누르면 /api/plan/{planId}로 냐용 얻어오고(아래로 토글)
+동시에 /api/plan/{planId}에서 태스크 내용도 같이 가져와서 출력
+
+수정대신 삭제 버튼 만들어서 /api/plan/{plan_id}으로 삭제
+
+새로 만들기는 강의 불러오기 /api/lecture하고
+강의 선택하면 /api/lecture/{lecture_id}/section 불러와지게 하고
+/api/plan으로 데이터 생성
+그리고 ㅈ다시 /api/plan으로 리로딩
+
+*/
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
