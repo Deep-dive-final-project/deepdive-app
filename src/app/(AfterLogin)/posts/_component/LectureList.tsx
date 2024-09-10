@@ -89,7 +89,7 @@ const dummySections2: Section[] = [
 const dummyLectures: Lecture[] = [
   {
     id: 1,
-    title: "리액트 기본 강의",
+    title: "타입스크립트 개론",
     sections: dummySections1,
   },
   {

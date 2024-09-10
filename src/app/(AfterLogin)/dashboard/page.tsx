@@ -59,7 +59,11 @@ export default function Dashboard() {
         console.log("Plan Response:", planResponse);
 
         if (planResponse) {
+<<<<<<< HEAD
           const fetchedPlans = planResponse.map(
+=======
+          const fetchedPlans = planResponse.getPlanForMainPageResponseDtos.map(
+>>>>>>> 02335ac1ab240c3780459613cbb82adb62ba3a9a
             (plan: any) => ({
               plan_id: plan.planId,
               plan_name: plan.planTitle,
@@ -72,11 +76,22 @@ export default function Dashboard() {
           const plansWithDetails = await Promise.all(
             fetchedPlans.map(async (plan: LearningPlan) => {
               const detailResponse = await fetchWithAuth(`/api/plan/${plan.plan_id}`);
+<<<<<<< HEAD
               console.log("detailResponse:", detailResponse);
               if (detailResponse.success && detailResponse.data) {
                 return { ...plan, state: detailResponse.data.state };
+=======
+              if (!detailResponse) {
+                console.log("없어요")
+                return plan;
+>>>>>>> 02335ac1ab240c3780459613cbb82adb62ba3a9a
               }
-              return plan;
+              console.log("여기까지 안넘어올듯")
+              console.log(detailResponse)
+              // if (detailResponse.success && detailResponse.data) {
+              //   return { ...plan, state: detailResponse.data.state };
+              // }
+              // return plan;
             })
           );
 
