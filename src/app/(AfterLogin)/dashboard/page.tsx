@@ -50,6 +50,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("accessToken :",accessToken);
       try {
         // 학습 계획 가져오기
         const planResponse = await fetchWithAuth("/api/plan/overview");
@@ -94,7 +95,9 @@ export default function Dashboard() {
 
         // 최신 강의 노트 데이터 가져오기
         const noteResponse = await fetchWithAuth("/api/note/latest");
+        console.log("noteResponse:", noteResponse);
         if (noteResponse.success && noteResponse.data && noteResponse.data.contents) {
+          
           setNotes(noteResponse.data.contents); // 노트 데이터를 상태에 설정
         } else {
           console.error("Failed to fetch latest notes:", noteResponse);
