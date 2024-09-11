@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './campaignComplete.module.css';
 import Link from 'next/link';
+
 import { useSearchParams } from 'next/navigation';
 
 // 추천 강의의 타입 정의
@@ -13,6 +14,7 @@ interface RecommendedCourse {
   lecture_url: string;
   image_url: string;
 }
+
 
 export default function CampaignComplete() {
   const [recommendedCourses, setRecommendedCourses] = useState<RecommendedCourse[]>([]); // 타입을 RecommendedCourse 배열로 설정
@@ -70,6 +72,7 @@ export default function CampaignComplete() {
         <div className={styles.recommendedSection}>
           <h3 className={styles.recommendationTitle}>내가 좋아할 만한 다른 강의</h3>
           <div className={styles.courseList}>
+
             {recommendedCourses.map((course, index) => (
               <div key={index} className={styles.courseItem}>
                 <img src={course.image_url} alt={course.title} className={styles.courseImage} />

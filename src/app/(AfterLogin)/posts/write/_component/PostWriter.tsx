@@ -1,58 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import styles from "./page.module.css";
-import { useState } from "react";
-import { useRouter, useParams  } from "next/navigation";
+import styles from "../page.module.css";
+import { useState, useEffect, Suspense  } from "react";
+import { useRouter, useSearchParams  } from "next/navigation";
 import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
 import { useAuth } from "@/app/context/AuthProvider";
-import axios from "axios";
 
-type PostsUpdateProps = {
-  beforeTitle: string;
-  beforeContent: string;
-  beforeSummary: string;
-}
 
-export default function PostsUpdate({ beforeTitle, beforeContent, beforeSummary }:PostsUpdateProps) {
+export default function PostWriter() {
   const router = useRouter();
-  const { postId } = useParams ();
+  const searchParams = useSearchParams();
+
+  const taskId = searchParams.get("taskId");
+  const taskTitle = searchParams.get("taskTitle");
+
+  useEffect(() => {
+    if (!taskId) {
+      router.push("/posts");
+    }
+  }, [taskId, router]);
 
   const { fetchWithAuth } = useAuth();
 
-  const [title, setTitle] = useState<string>(beforeTitle);
-  const [post, setPost] = useState<string>(beforeContent);
+  const [title, setTitle] = useState<string>("");
+  const [post, setPost] = useState<string>("");
   const [isView, setIsView] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [summaryMrkdwn, setSummaryMrkdwn] = useState<string>(beforeSummary);
+  const [summaryMrkdwn, setSummaryMrkdwn] = useState<string>("");
 
   const handleSummaryPost = async () => {
     setIsLoading(true);
-    try {
-      const summaryRes = await axios.post(
-        `${process.env.NEXT_PUBLIC_AI_URL}/ai/note/summary`, {
-          content: post,
-        }
-      );
-      // const res = await fetchWithAuth("/ai/note/summary",{
-      //   method: "post",
-      //   data: {
-      //     content: post,
-      //   }
-      // });
-      console.log("AI 요약 결과", summaryRes);
+    // try {
+    //   const summaryRes = await axios.post(
+    //     `${process.env.NEXT_PUBLIC_AI_URL}/ai/note/summary`, {
+    //       content: post,
+    //     }
+    //   );
+    //   // const res = await fetchWithAuth("/ai/note/summary",{
+    //   //   method: "post",
+    //   //   data: {
+    //   //     content: post,
+    //   //   }
+    //   // });
+    //   console.log("AI 요약 결과", summaryRes);
 
-    } catch (error) {
-      console.error(error);
-    }
-    
-    setIsLoading(false);
+    // } catch (error) {
+    //   console.error(error);
+    // }
+
+    // api 작동을 안해서
+    setTimeout(() => {
+      setIsView(true);
+      setIsLoading(false);
+    }, 1000)
   };
   const handleSubmitPost = async () => {
     try {
-      const { isSuccess } = await fetchWithAuth(`/api/note/${postId}`, {
-        method: 'patch',
+      const { isSuccess } = await fetchWithAuth("/api/note", {
+        method: 'post',
         data: {
+          task_id: taskId,
           title,
           content: post,
           summary: summaryMrkdwn
@@ -67,12 +75,13 @@ export default function PostsUpdate({ beforeTitle, beforeContent, beforeSummary 
       console.error(error)
     }
     
-    alert("수정 도중 문제가 발생했습니다.");
+    alert("업로드 중 문제가 발생했습니다.");
     return;
   };
 
   return (
     <div className={styles.wrapper}>
+    
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <Link href="/posts/" className={styles.backArrow}>
@@ -106,7 +115,7 @@ export default function PostsUpdate({ beforeTitle, beforeContent, beforeSummary 
             disabled={!post.trim() || isLoading}
             onClick={handleSubmitPost}
           >
-            수정
+            업로드
           </button>
         </div>
       </div>
@@ -118,16 +127,16 @@ export default function PostsUpdate({ beforeTitle, beforeContent, beforeSummary 
           onChange={(e) => setTitle(e.target.value)}
           placeholder="제목을 입력하세요."
         />
-        <div>{title}</div>
+        <div>{taskTitle}</div>
         <textarea
           name="note"
           id=""
           className={styles.textArea}
           onChange={(e) => setPost(e.target.value)}
           placeholder="강의를 듣고 배운 내용을 적어보세요."
-        >{post}</textarea>
+        ></textarea>
         {isLoading && <div>Loading...</div>}
-        {!!summaryMrkdwn.trim() && <MarkdownToHTML content={summaryMrkdwn} />}
+        {isView && <MarkdownToHTML content={summaryMrkdwn} />}
       </div>
     </div>
   );

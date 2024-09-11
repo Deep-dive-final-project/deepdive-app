@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { getTitleByPath } from "../utils/getTitleByPath";
 import NavItem from "./_component/NavItem";
 import RQProvider from "./_component/RQProvider";
+import Image from "next/image";
 
 export default function AfterLoginLayout({
   children,
@@ -287,7 +288,7 @@ export default function AfterLoginLayout({
                       Lv. <b>19</b>
                     </span>
                     <div className={styles.cloudContainer}>
-                      <img
+                      <Image
                         alt="구름조각 아이콘"
                         loading="eager"
                         width="20"
