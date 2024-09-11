@@ -6,14 +6,23 @@ import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/app/context/AuthProvider";
 import { Post, PostContent } from "@/types/post";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import PostEditor from "../_component/PostEditor";
 
 type PostPageProps = {
   params: { postId: string };
 };
 export default function PostPage({ params }: PostPageProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
+
   const { postId } = params;
+
   const { fetchWithAuth } = useAuth();
+
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+
 
   const fetchPost = async () => {
     try {
@@ -58,8 +67,8 @@ export default function PostPage({ params }: PostPageProps) {
     return <div style={{ padding: "3rem" }}>포스트가 없습니다.</div>;
   }
 
-  const handleUpdatePost = async () => {
-    // note 수정
+  const handleUpdatePost = () => {
+    setIsUpdate(true);
   }
   const handleDeletePost = () => {
     if (confirm("정말 삭제하시겠습니까?")) {
@@ -136,10 +145,11 @@ export default function PostPage({ params }: PostPageProps) {
           <MarkdownToHTML content={post.summary} />
         </div>
         <div className={styles.rawText}>
-          <h5>원본 글</h5>
+          <h4>원본 글</h4>
           <p>{post.content}</p>
         </div>
       </div>
+      {isUpdate && <PostEditor beforePost={post} />}
     </div>
   );
 }
