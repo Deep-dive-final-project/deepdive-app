@@ -21,16 +21,12 @@ interface Plan {
   state: "pending" | "on_going" | "finish";
 }
 
-interface PlanDetail {
+// PlanDetail의 타입 정의 (Plan을 확장)
+interface PlanDetail extends Plan {
   plan_id: number;
-  plan_name: string;
-  course?: string;
-  goal?: string;
-  tasks: Task[];
   start_date: string;
   end_date: string;
   description: string;
-  state: "pending" | "on_going" | "finish";
 }
 
 // Lecture의 타입 정의 (강의 데이터)
@@ -44,19 +40,30 @@ interface Section {
   section_name: string;
 }
 
+interface TaskDetail {
+  taskId: number;
+  title: string;
+  state: string;
+  completeDate: string;
+}
+
 export default function Campaign() {
   const [showCreatePanel, setShowCreatePanel] = useState(false);
   const [planName, setPlanName] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<number | "">("");
   const [goal, setGoal] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [plans, setPlans] = useState<Plan[]>([]);
+  const [taskDetails, setTaskDetails] = useState<TaskDetail[]>([]); // Task 상세 정보 저장
+  const [plans, setPlans] = useState<PlanDetail[]>([]); // PlanDetail 타입으로 변경
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [sections, setSections] = useState<Section[]>([]);
+  const [showDetailPanel, setShowDetailPanel] = useState(false);
+  const [selectedPlanDetails, setSelectedPlanDetails] = useState<PlanDetail | null>(null);
+
   const [collapsedSections, setCollapsedSections] = useState<{
     [key: string]: boolean;
   }>({
@@ -84,16 +91,25 @@ export default function Campaign() {
         console.log("Plan Response:", planResponse);
 
         if (planResponse) {
-          const fetchedPlans = planResponse.map((plan: any) => ({
-            id: plan.planId,
-            plan_name: plan.planTitle,
-            start_date: new Date(plan.startDate).toISOString().split("T")[0],
-            state: "pending",
-          }));
+          const fetchedPlans: PlanDetail[] = planResponse.map((plan: any) => {
+            const startDate = plan.startDate ? new Date(plan.startDate) : null;
+            const endDate = plan.endDate ? new Date(plan.endDate) : null;
+
+            return {
+              id: plan.planId,
+              plan_id: plan.planId,
+              plan_name: plan.planTitle,
+              start_date: startDate && !isNaN(startDate.getTime()) ? startDate.toISOString().split("T")[0] : "",
+              end_date: endDate && !isNaN(endDate.getTime()) ? endDate.toISOString().split("T")[0] : "",
+              description: plan.description || "",
+              state: "pending",
+              tasks: [],
+            };
+          });
 
           // 각 학습 계획의 세부 정보 가져오기
           const plansWithDetails = await Promise.all(
-            fetchedPlans.map(async (plan: Plan) => {
+            fetchedPlans.map(async (plan: PlanDetail) => {
               const detailResponse = await fetchWithAuth(`/api/plan/${plan.id}`);
               console.log("Detail Response:", detailResponse);
               if (detailResponse.success && detailResponse.data) {
@@ -139,23 +155,32 @@ export default function Campaign() {
   };
 
   const handlePlanClick = async (planId: number) => {
-    // 선택된 계획 ID와 현재 클릭된 계획 ID가 같은 경우, 선택 해제
     if (selectedPlanId === planId) {
-      setSelectedPlanId(null); 
+      setSelectedPlanId(null);
       setTasks([]); // 태스크 목록 초기화
+      setTaskDetails([]);
+      setSelectedPlanDetails(null);
+      setShowDetailPanel(false); // 같은 계획을 다시 클릭했을 때 세부 정보 패널 숨기기
       return;
     }
-  
+
     try {
-      const response = await fetchWithAuth(`/api/plan/${planId}`);
-      console.log("/api/plan/${planId}", response);
-      if (response.success) {
-        const plan = response.data;
-        setSelectedPlanId(planId); // 선택된 계획 ID 설정
-        setTasks(plan.tasks); // 태스크 내용 설정
+      const plan = plans.find((p) => p.id === planId);
+      if (plan) {
+        setSelectedPlanId(planId);
+        setTasks(plan.tasks);
+        setSelectedPlanDetails(plan); // PlanDetail을 직접 설정
+        setShowDetailPanel(true); // 세부 정보 패널 표시
+
+        // Task 정보 가져오기
+        const taskResponse = await fetchWithAuth(`/api/task/${planId}`);
+        console.log("Task Response:", taskResponse);
+        if (taskResponse.success) {
+          setTaskDetails(taskResponse.data.contents);
+        }
       }
     } catch (error) {
-      console.error("플랜을 가져오는 중 오류 발생:", error);
+      console.error("태스크 정보를 가져오는 중 오류 발생:", error);
     }
   };
 
@@ -214,9 +239,9 @@ export default function Campaign() {
       },
     })
       .then((response) => {
-        console.log("Response from /api/plan:", response);
-        if (response.success) {
-          router.push("/campaign/complete");
+        console.log("Response from create /api/plan:", response);
+        if (response.isSuccess) {
+          router.push(`/campaign/complete?title=${encodeURIComponent(planName)}`);
         } else {
           console.error("Failed to create learning plan:", response.message || "Unknown error");
         }
@@ -292,17 +317,6 @@ export default function Campaign() {
                       >
                         {plan.plan_name}
                       </div>
-                      {selectedPlanId === plan.id && (
-                        <div className={styles.planDetails}>
-                          {tasks.map((task, index) => (
-                            <div key={index} className={styles.taskItem}>
-                              <span>
-                                {task.section_name} - {task.status}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -422,6 +436,53 @@ export default function Campaign() {
             </div>
           </div>
         </div>
+
+        {/* 학습 계획 세부 정보 패널 */}
+        {showDetailPanel && (
+          <div className={`${styles.rightPanel2} ${showDetailPanel ? styles.slideIn : styles.slideOut}`}>
+            <button className={styles.closeButton} onClick={() => setShowDetailPanel(false)}>
+              X
+            </button>
+            <div className={styles.detailFormContainer}>
+              <h2 className={styles.detailFormTitle}>학습 계획 세부 정보</h2>
+
+              <div>
+                <label className={styles.detailLabel}>학습 계획 제목</label>
+                <p>{selectedPlanDetails?.plan_name}</p>
+              </div>
+
+              <div>
+                <label className={styles.detailLabel}>학습 목표</label>
+                <p>{selectedPlanDetails?.description}</p>
+              </div>
+
+              <div>
+                <label className={styles.detailLabel}>시작 날짜</label>
+                <p>{selectedPlanDetails?.start_date ? new Date(selectedPlanDetails.start_date).toLocaleDateString() : ''}</p>
+              </div>
+
+              <div>
+                <label className={styles.detailLabel}>종료 날짜</label>
+                <p>{selectedPlanDetails?.end_date ? new Date(selectedPlanDetails.end_date).toLocaleDateString() : ''}</p>
+              </div>
+
+              {/* 태스크 목록 */}
+              <div className={styles.taskSection}>
+                <h3 className={styles.taskTitle}>태스크 목록</h3>
+                {taskDetails.length > 0 ? (
+                  taskDetails.map((task, index) => (
+                    <div key={task.taskId} className={styles.taskItem}>
+                      <span>{task.title} - {task.state}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p>태스크 불러오는 중...</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
