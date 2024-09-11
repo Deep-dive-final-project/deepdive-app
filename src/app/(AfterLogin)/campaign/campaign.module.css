@@ -363,6 +363,12 @@
   margin-bottom: 15px;
 }
 
+.detailFormContainer p{
+  margin: 10px;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
 .taskSection {
   margin-top: 20px;
   border-top: 1px solid #ddd;
@@ -371,6 +377,7 @@
   border-radius: 8px; /* 모서리를 둥글게 */
   padding: 10px; /* 내부 여백 추가 */
   background-color: #fff;
+  justify-content: space-between;
 }
 
 .taskTitle {
@@ -408,4 +415,17 @@
 .rightPanel2.slideOut {
   transform: translateX(100%);
   transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+/* 상태별 텍스트 색상 */
+.statusPending {
+  color: #ff9800; /* 주황색 (대기 중) */
+}
+
+.statusOngoing {
+  color: #2196f3; /* 파란색 (진행 중) */
+}
+
+.statusFinish {
+  color: #4caf50; /* 녹색 (완료) */
 }
