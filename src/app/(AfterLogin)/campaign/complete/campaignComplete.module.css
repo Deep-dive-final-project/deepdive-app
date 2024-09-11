@@ -6,7 +6,7 @@
     padding: 40px;
     text-align: center;
     background-color: #fff;
-    height: 100vh;
+    height: 120vh;
   }
   
   .content {
@@ -82,12 +82,19 @@
   
   .courseList {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     justify-content: center;
   }
   
   .courseItem {
-    text-align: center;
+    text-align: left;
+    width: 180px;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);;
+  }
+
+  .courseItem:hover {
+    transform: translateY(-5px);
   }
   
   .courseImage {
@@ -98,5 +105,22 @@
   .courseTitle {
     margin-top: 10px;
     font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    padding-left: 3px;
+  }
+
+  .courseInstructor {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+    padding-left: 3px;
+  }
+  
+  .coursePrice {
+    font-size: 14px;
+    color: dodgerblue;
+    margin-bottom: 15px;
+    padding-left: 3px;
   }
   
