@@ -52,8 +52,8 @@ export default function Campaign() {
   const [planName, setPlanName] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<number | "">("");
   const [goal, setGoal] = useState("");
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [taskDetails, setTaskDetails] = useState<TaskDetail[]>([]); // Task 상세 정보 저장
+  const [createPanelTasks, setCreatePanelTasks] = useState<Task[]>([]); // 학습 계획 생성 화면의 태스크 저장
+  const [detailPanelTaskDetails, setDetailPanelTaskDetails] = useState<TaskDetail[]>([]); // 학습 계획 세부 정보 패널의 태스크 상세 정보 저장
   const [plans, setPlans] = useState<PlanDetail[]>([]); // PlanDetail 타입으로 변경
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
@@ -157,8 +157,7 @@ export default function Campaign() {
   const handlePlanClick = async (planId: number) => {
     if (selectedPlanId === planId) {
       setSelectedPlanId(null);
-      setTasks([]); // 태스크 목록 초기화
-      setTaskDetails([]);
+      setDetailPanelTaskDetails([]); // 태스크 목록 초기화
       setSelectedPlanDetails(null);
       setShowDetailPanel(false); // 같은 계획을 다시 클릭했을 때 세부 정보 패널 숨기기
       return;
@@ -168,15 +167,18 @@ export default function Campaign() {
       const plan = plans.find((p) => p.id === planId);
       if (plan) {
         setSelectedPlanId(planId);
-        setTasks(plan.tasks);
         setSelectedPlanDetails(plan); // PlanDetail을 직접 설정
         setShowDetailPanel(true); // 세부 정보 패널 표시
 
         // Task 정보 가져오기
         const taskResponse = await fetchWithAuth(`/api/task/${planId}`);
-        console.log("Task Response:", taskResponse);
-        if (taskResponse.success) {
-          setTaskDetails(taskResponse.data.contents);
+        console.log("Task Response:", taskResponse); // API 응답 확인
+
+        if (Array.isArray(taskResponse)) {
+          setDetailPanelTaskDetails(taskResponse); // 배열을 바로 사용
+          console.log("Updated Detail Panel Task Details:", taskResponse); // 업데이트된 태스크 정보 로그
+        } else {
+          console.error("Failed to fetch task details: Unexpected response format", taskResponse);
         }
       }
     } catch (error) {
@@ -185,7 +187,7 @@ export default function Campaign() {
   };
 
   const handleTaskStatusChange = (index: number, newStatus: string) => {
-    setTasks((prevTasks) => {
+    setCreatePanelTasks((prevTasks) => {
       const updatedTasks = [...prevTasks];
       updatedTasks[index].status = newStatus;
       return updatedTasks;
@@ -203,7 +205,7 @@ export default function Campaign() {
     setPlanName("");
     setSelectedCourse("");
     setGoal("");
-    setTasks([]);
+    setCreatePanelTasks([]);
     setStartDate("");
     setEndDate("");
     setDescription("");
@@ -267,7 +269,7 @@ export default function Campaign() {
             status: "시작전",
           }));
 
-          setTasks(fetchedSections);
+          setCreatePanelTasks(fetchedSections);
         } else {
           console.error("섹션을 가져오는 중 오류 발생:", response.message || "Unknown error");
         }
@@ -275,7 +277,7 @@ export default function Campaign() {
         console.error("섹션을 가져오는 중 오류 발생:", error);
       }
     } else {
-      setTasks([]);
+      setCreatePanelTasks([]);
     }
   };
 
@@ -283,6 +285,20 @@ export default function Campaign() {
     시작전: plans.filter((plan) => plan.state === "pending"),
     진행중: plans.filter((plan) => plan.state === "on_going"),
     완료: plans.filter((plan) => plan.state === "finish"),
+  };
+
+  // 상태를 한국어로 변환하는 함수
+  const getStatusLabel = (state: string) => {
+    switch (state) {
+      case 'pending':
+        return '대기 중';
+      case 'on_going':
+        return '진행 중';
+      case 'finish':
+        return '완료';
+      default:
+        return '알 수 없음';
+    }
   };
 
   return (
@@ -407,7 +423,7 @@ export default function Campaign() {
             {/* 태스크 목록 */}
             <div className={styles.taskSection}>
               <h3 className={styles.taskTitle}>태스크 목록</h3>
-              {tasks.map((task, index) => (
+              {createPanelTasks.map((task, index) => (
                 <div key={index} className={styles.taskItem}>
                   <span>{task.section_name}</span>
                   <select
@@ -466,13 +482,21 @@ export default function Campaign() {
                 <p>{selectedPlanDetails?.end_date ? new Date(selectedPlanDetails.end_date).toLocaleDateString() : ''}</p>
               </div>
 
-              {/* 태스크 목록 */}
+              {/* 학습 계획 세부 정보 패널 태스크 목록 */}
               <div className={styles.taskSection}>
                 <h3 className={styles.taskTitle}>태스크 목록</h3>
-                {taskDetails.length > 0 ? (
-                  taskDetails.map((task, index) => (
+                {detailPanelTaskDetails && detailPanelTaskDetails.length > 0 ? (
+                  detailPanelTaskDetails.map((task) => (
                     <div key={task.taskId} className={styles.taskItem}>
-                      <span>{task.title} - {task.state}</span>
+                      <span
+                        className={`
+                          ${task.state === 'pending' ? styles.statusPending : ''} 
+                          ${task.state === 'on_going' ? styles.statusOngoing : ''} 
+                          ${task.state === 'finish' ? styles.statusFinish : ''}
+                        `}
+                      >
+                        {task.title} - {getStatusLabel(task.state)}
+                      </span>
                     </div>
                   ))
                 ) : (
