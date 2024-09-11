@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/app/context/AuthProvider";
 import styles from "./dashboard.module.css"; // CSS 모듈 임포트
 import { useQueryClient } from "@tanstack/react-query";
+import Link from 'next/link';
 
 import {
   activityStatuses,
@@ -242,9 +243,11 @@ export default function Dashboard() {
               {Array.isArray(notes) && notes.length > 0 ? (
                 notes.map((note) => (
                   <li key={note.note_id}>
-                    <div className={styles.noteItem}>
-                      {note.title}
-                    </div>
+                    <Link href={`/posts/${note.note_id}`} passHref legacyBehavior>
+                      <div className={styles.noteItem} style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
+                        {note.title}
+                      </div>
+                    </Link>
                   </li>
                 ))
               ) : (
