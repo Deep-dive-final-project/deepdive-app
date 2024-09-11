@@ -33,7 +33,7 @@ interface RecommendedLecture {
 
 // 강의 노트의 타입 정의
 interface Note {
-  note_id: number;
+  noteId: number;
   title: string;
   complete_date: string;
 }
@@ -242,8 +242,8 @@ export default function Dashboard() {
             <ul className={styles.noteList}>
               {Array.isArray(notes) && notes.length > 0 ? (
                 notes.map((note) => (
-                  <li key={note.note_id}>
-                    <Link href={`/posts/${note.note_id}`} passHref legacyBehavior>
+                  <li key={note.noteId}>
+                    <Link href={`/posts/${note.noteId}`} passHref legacyBehavior>
                       <div className={styles.noteItem} style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
                         {note.title}
                       </div>
