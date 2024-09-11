@@ -30,7 +30,7 @@ export default function QuizModal({
     if (!!quiz.answer && !!quiz.feedback) {
       setIsSubmitted(true);
     }
-  }, []);
+  }, [quiz]);
 
   return (
     <>

@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Post } from "@/types/post";
 import { Suspense } from "react";
 
-export default async function PostList() {
+export default function PostList() {
   const { fetchWithAuth } = useAuth();
 
   const fetchPosts = async () => {

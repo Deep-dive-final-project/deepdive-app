@@ -3,6 +3,7 @@
 import React from 'react';
 import styles from './campaignComplete.module.css';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function CampaignComplete() {
   return (
@@ -10,7 +11,7 @@ export default function CampaignComplete() {
       
       <div className={styles.content}>
         <div className={styles.congratsIcon}>
-          <img src="/images/congrats-icon.png" alt="Congratulation" className={styles.iconImage} />
+          <Image src="/images/congrats-icon.png" alt="Congratulation" className={styles.iconImage} />
         </div>
         
         <h2 className={styles.title}>‘AWS 강의 듣기’</h2>
@@ -29,15 +30,15 @@ export default function CampaignComplete() {
           <h3 className={styles.recommendationTitle}>내가 좋아할 만한 다른 강의</h3>
           <div className={styles.courseList}>
             <div className={styles.courseItem}>
-              <img src="/images/Deep_Dive_Fullstack.png" alt="Spring Security OAuth2" className={styles.courseImage} />
+              <Image src="/images/Deep_Dive_Fullstack.png" alt="Spring Security OAuth2" className={styles.courseImage} />
               <p className={styles.courseTitle}>Spring Security OAuth2</p>
             </div>
             <div className={styles.courseItem}>
-              <img src="/images/Deep_Dive_Fullstack.png" alt="Java Coding Test" className={styles.courseImage} />
+              <Image src="/images/Deep_Dive_Fullstack.png" alt="Java Coding Test" className={styles.courseImage} />
               <p className={styles.courseTitle}>Java Coding Test</p>
             </div>
             <div className={styles.courseItem}>
-              <img src="/images/Deep_Dive_Fullstack.png" alt="알고리즘 문제 해결 전략" className={styles.courseImage} />
+              <Image src="/images/Deep_Dive_Fullstack.png" alt="알고리즘 문제 해결 전략" className={styles.courseImage} />
               <p className={styles.courseTitle}>알고리즘 문제 해결 전략</p>
             </div>
           </div>

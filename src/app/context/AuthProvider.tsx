@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useState, useEffect } from 'react';
+import { createContext, ReactNode, useContext, useState, useEffect, useCallback } from 'react';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
@@ -42,14 +42,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return decoded.exp - currentTime;
   };
 
-  const scheduleAccessTokenRefresh = (token: string) => {
+  const scheduleAccessTokenRefresh = useCallback( (token: string) => {
     const expirationTime = getAccessTokenExpirationTime(token);
     const refreshTime = Math.max(expirationTime - 60, 0) * 1000;
 
     setTimeout(async () => {
       await refreshAccessToken();
     }, refreshTime);
-  };
+  }, [accessToken]);
 
   const login = async (credentials: { email: string; password: string }) => {
     let isSuccess = false;
@@ -144,7 +144,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (accessToken) {
       scheduleAccessTokenRefresh(accessToken);
     }
-  }, [accessToken]);
+  }, [accessToken, scheduleAccessTokenRefresh]);
 
   return (
     <AuthContext.Provider value={{ accessToken, login, refreshAccessToken, fetchWithAuth }}>

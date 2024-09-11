@@ -126,7 +126,7 @@ export default function Campaign() {
     };
 
     fetchData();
-  }, []);
+  });
 
   const handleCreateButtonClick = () => {
     resetForm();

@@ -11,6 +11,7 @@ import {
   expPoints,
 } from "@/data/activityStatus"; // 활동 현황 데이터 파일 임포트
 import QuizContainer from "../_component/QuizContainer";
+import Image from "next/image";
 
 // 학습 계획의 타입 정의
 interface LearningPlan {
@@ -117,7 +118,7 @@ export default function Dashboard() {
     };
 
     fetchData();
-  }, [accessToken]);
+  }, [accessToken, fetchWithAuth]);
 
   // 상태 변경 핸들러
   const handleStatusChange = (plan_id: number, newState: "pending" | "on_going" | "finish") => {
@@ -201,7 +202,7 @@ export default function Dashboard() {
                   .slice(currentSlide, currentSlide + 3)
                   .map((lecture, index) => (
                     <div key={index} className={styles.courseCard}>
-                      <img
+                      <Image
                         src={lecture.image_url}
                         alt={lecture.title}
                         className={styles.courseImage}

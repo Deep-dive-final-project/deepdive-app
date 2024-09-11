@@ -49,7 +49,7 @@ export default function Fetch() {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  });
 
   return <>div</>
 }
