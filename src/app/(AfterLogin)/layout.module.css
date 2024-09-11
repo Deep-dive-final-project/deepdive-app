@@ -216,3 +216,33 @@
   font-size: 12px;
   color: #888;
 }
+
+.deepdive {
+  padding: 12px 12px 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-bottom: .5rem;
+}
+.deepdive:hover {
+  background-color: #e9ecef;
+  border-radius: 0.5rem;
+}
+.workspace {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.workspace span {
+  color: rgb(43, 45, 54);
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+.deepdive img {
+  border-radius: .5rem;
+  max-width: 100%;
+}

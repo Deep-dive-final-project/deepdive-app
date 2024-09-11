@@ -136,6 +136,15 @@ export default function AfterLoginLayout({
                       </button>
                     )}
                   </div>
+                  <div className={styles.deepdive}>
+                    <div className={styles.workspace}>
+                    <Image src="/images/deepDiveImg.webp" alt="goorm" width={32} height={32} />
+                    <span>Deep Dive...</span>
+                    </div>
+                    <svg fill="var(--hint)" width="1.25rem" height="1.25rem" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.6201 6.18994L8.00013 10.8099L3.38013 6.18994H12.6201Z">
+                      </path></svg>
+                  </div>
                   <ul className={styles.listMenu}>
                     <li className={styles.list}>
                       <svg
@@ -295,7 +304,7 @@ export default function AfterLoginLayout({
                         height="20"
                         decoding="async"
                         data-nimg="1"
-                        src="https://exp.goorm.io/_next/image?url=https%3A%2F%2Fstatics.goorm.io%2Fexp%2Fv1%2Fpngs%2Fgoormpiece.png&w=48&q=100"
+                        src="/images/goormPiece.webp"
                       />
                       <span className={styles.cloudCount}>
                         <b>262</b>개

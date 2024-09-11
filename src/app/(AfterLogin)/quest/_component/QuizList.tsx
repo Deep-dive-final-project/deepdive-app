@@ -56,7 +56,7 @@ export default function QuizList({
                 width={50}
                 height={50}
                 alt="unsolved"
-                src="https://statics.goorm.io/exp/v1/svgs/badge_default.svg"
+                src="/images/badge_default.svg"
               />
             )}
             {quiz.answer && quiz.feedback && (
@@ -64,7 +64,7 @@ export default function QuizList({
                 width={50}
                 height={50}
                 alt="solved"
-                src="https://statics.goorm.io/exp/v1/svgs/badge_success.svg"
+                src="/images/badge_success.svg"
               />
             )}
             <div>{quiz.name}</div>
