@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './campaignComplete.module.css';
 import Link from 'next/link';
-<<<<<<< HEAD
-import Image from 'next/image';
-=======
+
 import { useSearchParams } from 'next/navigation';
 
 // 추천 강의의 타입 정의
@@ -16,7 +14,7 @@ interface RecommendedCourse {
   lecture_url: string;
   image_url: string;
 }
->>>>>>> 0e80e94408485d67f79170325c35f5efad0e6182
+
 
 export default function CampaignComplete() {
   const [recommendedCourses, setRecommendedCourses] = useState<RecommendedCourse[]>([]); // 타입을 RecommendedCourse 배열로 설정
@@ -56,7 +54,7 @@ export default function CampaignComplete() {
       
       <div className={styles.content}>
         <div className={styles.congratsIcon}>
-          <Image src="/images/congrats-icon.png" alt="Congratulation" className={styles.iconImage} />
+          <img src="/images/congrats-icon.png" alt="Congratulation" className={styles.iconImage} />
         </div>
         
         <h2 className={styles.title}>{`‘${title}’`}</h2>

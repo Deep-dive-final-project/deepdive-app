@@ -202,7 +202,7 @@ export default function Dashboard() {
                   .slice(currentSlide, currentSlide + 3)
                   .map((lecture, index) => (
                     <div key={index} className={styles.courseCard}>
-                      <Image
+                      <img
                         src={lecture.image_url}
                         alt={lecture.title}
                         className={styles.courseImage}
