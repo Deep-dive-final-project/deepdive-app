@@ -52,9 +52,9 @@ export default function Campaign() {
   const [planName, setPlanName] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<number | "">("");
   const [goal, setGoal] = useState("");
-  const [createPanelTasks, setCreatePanelTasks] = useState<Task[]>([]); // 학습 계획 생성 화면의 태스크 저장
-  const [detailPanelTaskDetails, setDetailPanelTaskDetails] = useState<TaskDetail[]>([]); // 학습 계획 세부 정보 패널의 태스크 상세 정보 저장
-  const [plans, setPlans] = useState<PlanDetail[]>([]); // PlanDetail 타입으로 변경
+  const [createPanelTasks, setCreatePanelTasks] = useState<Task[]>([]);
+  const [detailPanelTaskDetails, setDetailPanelTaskDetails] = useState<TaskDetail[]>([]);
+  const [plans, setPlans] = useState<PlanDetail[]>([]);
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [startDate, setStartDate] = useState<string>("");
@@ -67,9 +67,9 @@ export default function Campaign() {
   const [collapsedSections, setCollapsedSections] = useState<{
     [key: string]: boolean;
   }>({
-    시작전: false,
-    진행중: false,
-    완료: false,
+    시작전: true,
+    진행중: true,
+    완료: true,
   });
 
   const [error, setError] = useState<{
@@ -83,50 +83,17 @@ export default function Campaign() {
   const { fetchWithAuth } = useAuth();
   const router = useRouter();
 
+  // 초기 데이터 로드: 모든 상태의 계획 가져오기
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchInitialData = async () => {
       try {
-        // 학습 계획 가져오기
-        const planResponse = await fetchWithAuth("/api/plan/overview");
-        console.log("Plan Response:", planResponse);
-
-        if (planResponse) {
-          const fetchedPlans: PlanDetail[] = planResponse.map((plan: any) => {
-            const startDate = plan.startDate ? new Date(plan.startDate) : null;
-            const endDate = plan.endDate ? new Date(plan.endDate) : null;
-
-            return {
-              id: plan.planId,
-              plan_id: plan.planId,
-              plan_name: plan.planTitle,
-              start_date: startDate && !isNaN(startDate.getTime()) ? startDate.toISOString().split("T")[0] : "",
-              end_date: endDate && !isNaN(endDate.getTime()) ? endDate.toISOString().split("T")[0] : "",
-              description: plan.description || "",
-              state: "pending",
-              tasks: [],
-            };
-          });
-
-          // 각 학습 계획의 세부 정보 가져오기
-          const plansWithDetails = await Promise.all(
-            fetchedPlans.map(async (plan: PlanDetail) => {
-              const detailResponse = await fetchWithAuth(`/api/plan/${plan.id}`);
-              console.log("Detail Response:", detailResponse);
-              if (detailResponse.success && detailResponse.data) {
-                return {
-                  ...plan,
-                  state: detailResponse.data.state,
-                  tasks: detailResponse.data.tasks || [],
-                };
-              }
-              return plan;
-            })
-          );
-
-          setPlans(plansWithDetails);
-        } else {
-          console.error("Failed to fetch learning plans:", planResponse);
-        }
+        // 모든 상태의 학습 계획 데이터 가져오기
+        const states = ["pending", "on_going", "finish"];
+        const allPlans = await Promise.all(states.map((state) => fetchPlansByState(state)));
+        
+        // 모든 계획을 하나의 배열로 합치기
+        const mergedPlans = allPlans.flat();
+        setPlans(mergedPlans);
 
         // 강의 목록 데이터 가져오기
         const lectureResponse = await fetchWithAuth("/api/lecture");
@@ -137,12 +104,48 @@ export default function Campaign() {
           console.error("Failed to fetch lecture:", lectureResponse.message || "Unknown error");
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching initial data:", error);
       }
     };
 
-    fetchData();
-  });
+    fetchInitialData();
+  }, []);
+
+  const fetchPlansByState = async (state: string) => {
+    try {
+      const response = await fetchWithAuth(`/api/plan?state=${state}`);
+      console.log(`Plans fetched for state ${state}:`, response);
+  
+      // API 응답이 성공적이고 필요한 데이터가 존재하는지 확인
+      if (response && response.getPlanForPlanPageResponseDtoList) {
+        const planList = response.getPlanForPlanPageResponseDtoList;
+  
+        // planList가 배열인지 확인하고 데이터를 처리합니다.
+        if (Array.isArray(planList)) {
+          const fetchedPlans = planList.map((plan: any) => ({
+            id: plan.plan_id,
+            plan_id: plan.plan_id,
+            plan_name: plan.plan_name,
+            start_date: "",
+            end_date: "",
+            description: "",
+            state: plan.state,
+            tasks: [],
+          }));
+          return fetchedPlans;
+        } else {
+          console.error(`Expected an array but received:`, planList);
+          return [];
+        }
+      } else {
+        console.error(`Failed to fetch plans for state ${state}:`, response);
+        return [];
+      }
+    } catch (error) {
+      console.error(`Error fetching plans for state ${state}:`, error);
+      return [];
+    }
+  };  
 
   const handleCreateButtonClick = () => {
     resetForm();
@@ -157,9 +160,9 @@ export default function Campaign() {
   const handlePlanClick = async (planId: number) => {
     if (selectedPlanId === planId) {
       setSelectedPlanId(null);
-      setDetailPanelTaskDetails([]); // 태스크 목록 초기화
+      setDetailPanelTaskDetails([]);
       setSelectedPlanDetails(null);
-      setShowDetailPanel(false); // 같은 계획을 다시 클릭했을 때 세부 정보 패널 숨기기
+      setShowDetailPanel(false);
       return;
     }
 
@@ -167,16 +170,16 @@ export default function Campaign() {
       const plan = plans.find((p) => p.id === planId);
       if (plan) {
         setSelectedPlanId(planId);
-        setSelectedPlanDetails(plan); // PlanDetail을 직접 설정
-        setShowDetailPanel(true); // 세부 정보 패널 표시
+        setSelectedPlanDetails(plan);
+        setShowDetailPanel(true);
 
         // Task 정보 가져오기
         const taskResponse = await fetchWithAuth(`/api/task/${planId}`);
-        console.log("Task Response:", taskResponse); // API 응답 확인
+        console.log("Task Response:", taskResponse);
 
         if (Array.isArray(taskResponse)) {
-          setDetailPanelTaskDetails(taskResponse); // 배열을 바로 사용
-          console.log("Updated Detail Panel Task Details:", taskResponse); // 업데이트된 태스크 정보 로그
+          setDetailPanelTaskDetails(taskResponse);
+          console.log("Updated Detail Panel Task Details:", taskResponse);
         } else {
           console.error("Failed to fetch task details: Unexpected response format", taskResponse);
         }
@@ -287,7 +290,6 @@ export default function Campaign() {
     완료: plans.filter((plan) => plan.state === "finish"),
   };
 
-  // 상태를 한국어로 변환하는 함수
   const getStatusLabel = (state: string) => {
     switch (state) {
       case 'pending':
@@ -506,7 +508,6 @@ export default function Campaign() {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
