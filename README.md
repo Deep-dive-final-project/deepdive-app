@@ -6,12 +6,16 @@
 
 ## 🚀 **프로젝트 소개**
 
-**Deep Dive Fullstack + GenAI Course** 과정의 일환으로, 기존 구름EXP 사이트를 보완하여 학습을 더 효과적이고 즐겁게 할 수 있도록 설계된 AI 기반 학습 관리 애플리케이션입니다.
+**Deep Dive Fullstack + GenAI Course** 과정의 일환으로, 기존 [구름EXP 사이트](https://exp.goorm.io/)를 보완하여 학습을 더 효과적이고 즐겁게 할 수 있도록 설계된 AI 기반 학습 관리 애플리케이션입니다.
 
 ## 🌐 **배포 주소**
 
 애플리케이션은 다음 링크에서 직접 확인하실 수 있습니다:  
-[구름 EXP+](http://deepdive-loadbalancer-1433393263.ap-northeast-2.elb.amazonaws.com)
+[구름 EXP+](http://deepdive-loadbalancer-1433393263.ap-northeast-2.elb.amazonaws.com/login)
+
+> **테스트 계정으로 체험해보세요!**  
+> - **아이디**: `deepdive2@deepdive.com`  
+> - **비밀번호**: `deepdive123`
 
 ## ✨ **주요 기능**
 
@@ -64,3 +68,8 @@
 </div>
 
 ---
+
+**감사합니다! 🙌**
+
+---
+
