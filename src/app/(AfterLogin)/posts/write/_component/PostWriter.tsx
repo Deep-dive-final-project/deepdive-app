@@ -2,11 +2,25 @@
 
 import Link from "next/link";
 import styles from "../page.module.css";
-import { useState, useEffect, Suspense  } from "react";
-import { useRouter, useSearchParams  } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import MarkdownToHTML from "@/app/_component/MarkdownToHTML";
 import { useAuth } from "@/app/context/AuthProvider";
+import axios from "@/lib/axios";
 
+const dummyMrkdwn = `
+# 리액트 훅스 요약
+
+- **리액트 훅스**는 함수형 컴포넌트에서 상태 관리와 생명주기를 다루기 위한 도구이다.
+- \`useState\`: 상태 추가 및 업데이트.
+- \`useEffect\`: 부수적인 작업 처리 (API 호출, DOM 업데이트 등).
+- 클래스형 컴포넌트 없이 상태 관리를 할 수 있어 코드가 간결해진다.
+- 복잡한 라이프사이클 메서드를 대체하여 가독성을 높임.
+
+**배운 점:**
+- \`useState\`, \`useEffect\`의 사용법을 익힘.
+- 훅스를 통해 더 직관적인 코드를 작성할 수 있음.
+`;
 
 export default function PostWriter() {
   const router = useRouter();
@@ -26,35 +40,30 @@ export default function PostWriter() {
   const [title, setTitle] = useState<string>("");
   const [post, setPost] = useState<string>("");
   const [isView, setIsView] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [summaryMrkdwn, setSummaryMrkdwn] = useState<string>("");
 
   const handleSummaryPost = async () => {
-    setIsLoading(true);
-    // try {
-    //   const summaryRes = await axios.post(
-    //     `${process.env.NEXT_PUBLIC_AI_URL}/ai/note/summary`, {
-    //       content: post,
-    //     }
-    //   );
-    //   // const res = await fetchWithAuth("/ai/note/summary",{
-    //   //   method: "post",
-    //   //   data: {
-    //   //     content: post,
-    //   //   }
-    //   // });
-    //   console.log("AI 요약 결과", summaryRes);
+    try {
+      const summaryRes = await axios.post(
+        `${process.env.NEXT_PUBLIC_AI_URL}/ai/note/summary`, {
+          content: post,
+        }
+      );
+      const res = await fetchWithAuth("/ai/note/summary",{
+        method: "post",
+        data: {
+          content: post,
+        }
+      });
+      console.log("AI 요약 결과", summaryRes);
+    } catch (error) {
+      console.error(error);
+    }
 
-    // } catch (error) {
-    //   console.error(error);
-    // }
-
-    // api 작동을 안해서
-    setTimeout(() => {
-      setIsView(true);
-      setIsLoading(false);
-    }, 1000)
+    setSummaryMrkdwn(dummyMrkdwn);
+    setIsView(true);
   };
+
   const handleSubmitPost = async () => {
     try {
       const { isSuccess } = await fetchWithAuth("/api/note", {
@@ -81,7 +90,6 @@ export default function PostWriter() {
 
   return (
     <div className={styles.wrapper}>
-    
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <Link href="/posts/" className={styles.backArrow}>
@@ -105,14 +113,14 @@ export default function PostWriter() {
         <div className={styles.buttons}>
           <button
             className={styles.summaryButton}
-            disabled={!post.trim() || isLoading}
+            disabled={!post.trim()}
             onClick={handleSummaryPost}
           >
             AI 요약
           </button>
           <button
             className={styles.uploadButton}
-            disabled={!post.trim() || isLoading}
+            disabled={!post.trim()}
             onClick={handleSubmitPost}
           >
             업로드
@@ -130,15 +138,12 @@ export default function PostWriter() {
         <div>{taskTitle}</div>
         <textarea
           name="note"
-          id=""
           className={styles.textArea}
           onChange={(e) => setPost(e.target.value)}
           placeholder="강의를 듣고 배운 내용을 적어보세요."
         ></textarea>
-        {isLoading && <div>Loading...</div>}
         {isView && <MarkdownToHTML content={summaryMrkdwn} />}
       </div>
     </div>
   );
 }
-
